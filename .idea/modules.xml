@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Fradio.iml" filepath="$PROJECT_DIR$/Fradio.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spotifysdk-1.0.0-beta4/spotifysdk-1.0.0-beta4.iml" filepath="$PROJECT_DIR$/spotifysdk-1.0.0-beta4/spotifysdk-1.0.0-beta4.iml" />
     </modules>
   </component>
 </project>

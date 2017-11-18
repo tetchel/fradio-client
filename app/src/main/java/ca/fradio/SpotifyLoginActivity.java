@@ -1,16 +1,28 @@
 package ca.fradio;
 
-import android.app.Activity;
-
-import com.spotify.sdk.android.authentication.AuthenticationClient;
-import com.spotify.sdk.android.authentication.AuthenticationRequest;
-import com.spotify.sdk.android.player.ConnectionStateCallback;
-
+/*
 public class SpotifyLoginActivity extends Activity implements ConnectionStateCallback {
+
+
+    /**
+     * The player used by this activity. There is only ever one instance of the player,
+     * which is owned by the {@link com.spotify.sdk.android.player.Spotify} class and refcounted.
+     * This means that you may use the Player from as many Fragments as you want, and be
+     * assured that state remains consistent between them.
+     * <p/>
+     * However, each fragment, activity, or helper class <b>must</b> call
+     * {@link com.spotify.sdk.android.player.Spotify#destroyPlayer(Object)} when they are no longer
+     * need that player. Failing to do so will result in leaked resources.
+     */
+    //Wprivate SpotifyPlayer mPlayer;
+
+
+
 
     /**
      * Request code that will be passed together with authentication result to the onAuthenticationResult
      */
+    /*
     private static final int REQUEST_CODE = 1337;
 
     private void openLoginWindow() {
@@ -114,4 +126,9 @@ public class SpotifyLoginActivity extends Activity implements ConnectionStateCal
         logStatus("Incoming connection message: " + message);
     }
 
+    private void logStatus(final String msg) {
+        Log.i("SpotifyLoginActivity", msg);
+    }
+
 }
+*/

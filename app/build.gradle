@@ -35,9 +35,11 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
     // This library handles authentication and authorization
-    compile 'com.spotify.android:auth:1.0.0-alpha'
+    //compile 'com.spotify.android:auth:1.0.0-alpha'
 
     // This library handles music playback
-    compile 'com.spotify.sdk:spotify-player-24-noconnect-2.20b@aar'
+    //compile 'com.spotify.sdk:spotify-player-24-noconnect-2.20b@aar'
+
+    compile project(':spotifysdk-1.0.0-beta4')
 
 }

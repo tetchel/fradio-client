@@ -1,6 +1,28 @@
 package ca.fradio;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ScrollView;
+import android.widget.TextView;
+
+import com.spotify.sdk.android.player.Connectivity;
+import com.spotify.sdk.android.player.Error;
+import com.spotify.sdk.android.player.Metadata;
+import com.spotify.sdk.android.player.PlaybackState;
+import com.spotify.sdk.android.player.Player;
+import com.spotify.sdk.android.player.PlayerEvent;
+import com.spotify.sdk.android.player.Spotify;
+import com.spotify.sdk.android.player.SpotifyPlayer;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -20,50 +42,12 @@ import android.app.Activity;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package com.spotify.sdk.demo;
-
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.spotify.sdk.android.authentication.AuthenticationClient;
-import com.spotify.sdk.android.authentication.AuthenticationRequest;
-import com.spotify.sdk.android.authentication.AuthenticationResponse;
-import com.spotify.sdk.android.player.Config;
-import com.spotify.sdk.android.player.ConnectionStateCallback;
-import com.spotify.sdk.android.player.Connectivity;
-import com.spotify.sdk.android.player.Error;
-import com.spotify.sdk.android.player.Metadata;
-import com.spotify.sdk.android.player.PlaybackBitrate;
-import com.spotify.sdk.android.player.PlaybackState;
-import com.spotify.sdk.android.player.Player;
-import com.spotify.sdk.android.player.PlayerEvent;
-import com.spotify.sdk.android.player.Spotify;
-import com.spotify.sdk.android.player.SpotifyPlayer;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
+//package com.spotify.sdk.demo;
 
 public class DemoActivity extends Activity implements
         Player.NotificationCallback {
 
-    /**
+    /*k, iol,*
      * Request code that will be passed together with authentication result to the onAuthenticationResult
      */
     private static final int REQUEST_CODE = 1337;
@@ -109,18 +93,6 @@ public class DemoActivity extends Activity implements
     // |  _| | |  __/ | (_| \__ \
     // |_|   |_|\___|_|\__,_|___/
     //
-
-    /**
-     * The player used by this activity. There is only ever one instance of the player,
-     * which is owned by the {@link com.spotify.sdk.android.player.Spotify} class and refcounted.
-     * This means that you may use the Player from as many Fragments as you want, and be
-     * assured that state remains consistent between them.
-     * <p/>
-     * However, each fragment, activity, or helper class <b>must</b> call
-     * {@link com.spotify.sdk.android.player.Spotify#destroyPlayer(Object)} when they are no longer
-     * need that player. Failing to do so will result in leaked resources.
-     */
-    private SpotifyPlayer mPlayer;
 
     private PlaybackState mCurrentPlaybackState;
 
@@ -180,7 +152,6 @@ public class DemoActivity extends Activity implements
         mSeekEditText = (EditText) findViewById(R.id.seek_edittext);
         mStatusTextScrollView = (ScrollView) findViewById(R.id.status_text_container);
         */
-        updateView();
         logStatus("Ready");
     }
 
