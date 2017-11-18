@@ -16,8 +16,6 @@ public class MediaStateReceiver extends BroadcastReceiver {
 
     private Requester requester = new Requester();
 
-    private String currentTrackId;
-
     private static final class SpotifyBroadcasts {
         static final String SPOTIFY_PACKAGE = "com.spotify.music";
         static final String PLAYBACK_STATE_CHANGED = SPOTIFY_PACKAGE + ".playbackstatechanged";
@@ -51,17 +49,20 @@ public class MediaStateReceiver extends BroadcastReceiver {
 
         String action = intent.getAction();
 
+        // The currentTrackId must always be set, or there will be an error.
+        String currentTrackId = intent.getStringExtra("id");
+
         if (action.equals(SpotifyBroadcasts.METADATA_CHANGED)) {
-            String trackId = intent.getStringExtra("id");
             //String artistName = intent.getStringExtra("artist");
             //String albumName = intent.getStringExtra("album");
             //String trackName = intent.getStringExtra("track");
-            //int trackLengthInSec = intent.getIntExtra("length", 0);
+            int trackLengthInSec = intent.getIntExtra("length", 0);
+            // Start a timer to find out when this song is going to end
 
             //Log.d(TAG, String.format("trackid %s artist %s album %s track %s len %d",
             //        trackId, artistName, albumName, trackName, trackLengthInSec));
 
-            currentTrackId = trackId;
+
             broadcast(currentTrackId, age);
         } else if (action.equals(SpotifyBroadcasts.PLAYBACK_STATE_CHANGED)) {
             boolean playing = intent.getBooleanExtra("playing", false);
@@ -72,7 +73,7 @@ public class MediaStateReceiver extends BroadcastReceiver {
                 broadcast(currentTrackId, positionInMs + age);
             }
             else {
-                // TODO Stop broadcasting?
+                // TODO Tell the server to pause
             }
 
         } else if (action.equals(SpotifyBroadcasts.QUEUE_CHANGED)) {

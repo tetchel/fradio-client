@@ -20,7 +20,7 @@ public class Requester {
 
     private static final String
             PROTOCOL = "http",
-            DOMAIN = "ec2-35-182-249-125.ca-central-1.compute.amazonaws.com",
+            DOMAIN = "ec2-35-182-236-140.ca-central-1.compute.amazonaws.com",
             ENCODING = "UTF-8",
 
             PARAM_SPOTIFY_USERNAME = "spotifyusername",
@@ -44,9 +44,9 @@ public class Requester {
         return null;
     }
 
-    public JSONObject requestListen(String spotifyUsername) {
+    public JSONObject requestListen(String spotifyUsername, String hostToListenTo) {
         try {
-            return new ListenRequester().execute(spotifyUsername).get();
+            return new ListenRequester().execute(spotifyUsername, hostToListenTo).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -61,6 +61,13 @@ public class Requester {
             String spotifyUsername = strings[0];
             String spotifyTrackid = strings[1];
             long scrolltime = Long.parseLong(strings[2]);
+
+            if(spotifyUsername == null || spotifyTrackid == null) {
+                Log.e(TAG, "NPE error!");
+                Log.e(TAG, "spotifyUsername==" + spotifyUsername + " spotifyTrackid=="
+                        + spotifyTrackid);
+                return null;
+            }
 
             try {
                 spotifyUsername = URLEncoder.encode(spotifyUsername, ENCODING);
@@ -86,10 +93,13 @@ public class Requester {
         protected JSONObject doInBackground(String... strings) {
 
             String spotifyUsername = strings[0];
+            String hostToListenTo = strings[1];
             try {
                 spotifyUsername = URLEncoder.encode(spotifyUsername, ENCODING);
 
-                String query = PARAM_SPOTIFY_USERNAME + '=' + spotifyUsername;
+                // First add the current's user's username
+                String query = "host" + PARAM_SPOTIFY_USERNAME + '=' + hostToListenTo +
+                            "&listener" + PARAM_SPOTIFY_USERNAME + '=' + spotifyUsername;
 
                 return doRequest("listen", query);
             } catch (IOException e) {
@@ -105,8 +115,11 @@ public class Requester {
 
         URLConnection conn = new URL(url).openConnection();
 
+
         //conn.setRequestProperty("Accept-Charset", ENCODING);
+        Log.d(TAG, "Getting response");
         InputStream responseStream = conn.getInputStream();
+        Log.d(TAG, "Finished getting response");
 
         StringBuilder responseBuilder = new StringBuilder();
         int i;
