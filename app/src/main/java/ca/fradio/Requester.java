@@ -113,22 +113,8 @@ public class Requester {
         String url = String.format("%s://%s/%s?%s", PROTOCOL, DOMAIN, path, query);
         Log.d(TAG, "The expanded broadcast request url is " + url);
 
-        URLConnection conn = new URL(url).openConnection();
+        String responseStr = Utility.getFromUrl(url);
 
-
-        //conn.setRequestProperty("Accept-Charset", ENCODING);
-        Log.d(TAG, "Getting response");
-        InputStream responseStream = conn.getInputStream();
-        Log.d(TAG, "Finished getting response");
-
-        StringBuilder responseBuilder = new StringBuilder();
-        int i;
-        while ((i = responseStream.read()) != -1) {
-            responseBuilder.append((char) i);
-        }
-
-        String responseStr = responseBuilder.toString();
-        Log.d(TAG, "Raw response for " + url + " :\n" + responseStr);
         try {
             return new JSONObject(responseStr);
         } catch (JSONException e) {
