@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 
-import org.json.JSONObject;
-
 import ca.fradio.Globals;
 import ca.fradio.Requester;
 
@@ -43,8 +41,9 @@ public class MediaStateReceiver extends BroadcastReceiver {
     }
 
     @Override
+    // This is sent with all broadcasts, regardless of type. The value is taken from
     public void onReceive(Context context, Intent intent) {
-        // This is sent with all broadcasts, regardless of type. The value is taken from
+        Log.d(TAG, "Received media broadcast: " + intent.getAction());
         // System.currentTimeMillis(), which you can compare to in order to determine how
         // old the event is.
         long timeSentInMs = intent.getLongExtra("timeSent", 0L);
@@ -83,20 +82,12 @@ public class MediaStateReceiver extends BroadcastReceiver {
             // Sent only as a notification, your app may want to respond accordingly.
             // we don't care about this one
         }
+        Log.d(TAG, "Finished handling broadcast");
     }
 
     private void broadcast(String trackid, long positionMs, long trackLength) {
         Log.d(TAG, "Broadcasting trackid " + trackid + " timestamp " + positionMs);
 
-        JSONObject resp = requester
-                .requestBroadcast(Globals.getSpotifyUsername(), trackid, positionMs, trackLength);
-
-        if(resp == null) {
-            Log.e(TAG, "THE RESPONSE WAS NULL TRYING TO BROADCAST!!!!!!");
-        }
-        else {
-            Log.d(TAG, "Informed server of broadcast and got response:\n" + resp);
-
-        }
+        requester.requestBroadcast(Globals.getSpotifyUsername(), trackid, positionMs, trackLength);
     }
 }

@@ -34,17 +34,11 @@ public class Requester {
      * Send a request to start BROADCASTING to the server.
      * @return The server's response, or NULL IF AN EXCEPTION OCCURS.
      */
-    public JSONObject requestBroadcast(String spotifyUsername, String spotifyTrackid,
+    public void requestBroadcast(String spotifyUsername, String spotifyTrackid,
                                        long scrolltime, long trackLength) {
-        try {
-            return new BroadcastRequester().execute(spotifyUsername, spotifyTrackid,
-                    "" + scrolltime, "" + trackLength).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
+
+        new BroadcastRequester().execute(spotifyUsername, spotifyTrackid,
+                "" + scrolltime, "" + trackLength);
     }
 
     public static JSONObject requestListen(String spotifyUsername, String hostToListenTo) {
@@ -60,21 +54,17 @@ public class Requester {
 
     public static ArrayList<String> requestStreamers() {
         try {
-
-            return parseJSONArray(new StreamersRequester().execute().get().getJSONArray("streamers"));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
+            return parseJSONArray(new StreamersRequester().execute().get()
+                    .getJSONArray("streamers"));
+        } catch (InterruptedException | ExecutionException | JSONException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private static class BroadcastRequester extends AsyncTask<String, Void, JSONObject> {
+    private static class BroadcastRequester extends AsyncTask<String, Void, Void> {
         @Override
-        protected JSONObject doInBackground(String... strings) {
+        protected Void doInBackground(String... strings) {
             String spotifyUsername = strings[0];
             String spotifyTrackid = strings[1];
             long scrolltime = Long.parseLong(strings[2]);
@@ -98,12 +88,16 @@ public class Requester {
                         PARAM_SCROLLTIME, scrolltime,
                         PARAM_LENGTH, length);
 
-                return doRequest("broadcast", query);
+                JSONObject result = doRequest("broadcast", query);
+                String status = result.getString("status");
+                if(!status.equals("OK")) {
+                    Log.e(TAG, "Received error after broadcast report: " + status);
+                }
             }
-            catch(IOException e) {
+            catch(IOException | JSONException e) {
                 Log.e(TAG, "Catastrophe!", e);
-                return null;
             }
+            return null;
         }
     }
 
@@ -154,7 +148,7 @@ public class Requester {
         String url = String.format("%s://%s/%s?%s", PROTOCOL, DOMAIN, path, query);
         Log.d(TAG, "The expanded broadcast request url is " + url);
 
-        String responseStr = Url(url);
+        String responseStr = getFromUrl(url);
         try {
             JSONObject responseStrJSON = new JSONObject(responseStr);
             return responseStrJSON;
@@ -183,7 +177,7 @@ public class Requester {
         return null;
     }
 
-    public static String Url(String url) throws IOException {
+    public static String getFromUrl(String url) throws IOException {
         Log.d(TAG, "Getting from " + url);
 
         URLConnection conn = new URL(url).openConnection();
