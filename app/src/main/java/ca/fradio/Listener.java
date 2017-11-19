@@ -14,6 +14,7 @@ import java.net.Socket;
 
 public class Listener extends Service {
 
+    private static final String TAG = "ListenerService";
 
     // Singleton instance to be called to get access to the Application Context from static code
     private static Listener INSTANCE;
@@ -21,6 +22,7 @@ public class Listener extends Service {
     private static final int PORT = 16987;
 
     private ServerSocket listenerSocket;
+    private ListenerThread listenerThread;
 
     @Nullable
     @Override
@@ -34,8 +36,9 @@ public class Listener extends Service {
         INSTANCE = this;
 
         try {
-            listenerSocket = new ServerSocket(PORT, 0, null);
-            ListenerThread listenerThread = new ListenerThread(listenerSocket);
+            //listenerSocket = new ServerSocket(PORT, 0, null);
+            listenerSocket = new ServerSocket(PORT);
+            listenerThread = new ListenerThread(listenerSocket);
             listenerThread.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -45,6 +48,23 @@ public class Listener extends Service {
         return START_NOT_STICKY;
     }
 
+    @Override
+        public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "Enter onDestroy");
+
+        listenerThread.interrupt();
+        try {
+            if (listenerSocket != null && !listenerSocket.isClosed()) {
+                listenerSocket.close();
+                Log.d(TAG, "Closed ServerSocket");
+            } else {
+                Log.w(TAG, "ServerSocket was not open!");
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Exception closing ServerSocket", e);
+        }
+    }
 
     /**
      * @return If this service is running. Only one instance of this service can run at a time.
@@ -82,8 +102,7 @@ public class Listener extends Service {
 
 class ListenerThread extends Thread {
 
-    private static final String TAG = "ListenerService";
-    private static final int PORT = 16987;
+    private static final String TAG = "ListenerThread";
 
     private ServerSocket listenerSocket;
 
@@ -100,6 +119,7 @@ class ListenerThread extends Thread {
             while (!Thread.currentThread().isInterrupted() && !listenerSocket.isClosed()) {
                 Log.d(TAG, "Ready to accept");
                 Socket acceptance = listenerSocket.accept();
+                Log.d(TAG, "Accepted something");
 
                 String request = Utility.readAllFromInputStream(acceptance.getInputStream());
 
@@ -107,6 +127,17 @@ class ListenerThread extends Thread {
             }
         } catch (IOException e){
             e.printStackTrace();
+        }
+
+        try {
+            if (listenerSocket != null && !listenerSocket.isClosed()) {
+                listenerSocket.close();
+                Log.d(TAG, "Closed ServerSocket");
+            } else {
+                Log.w(TAG, "ServerSocket was not open!");
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Exception closing ServerSocket", e);
         }
 
     }
