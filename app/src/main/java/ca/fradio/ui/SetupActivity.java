@@ -10,9 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import ca.fradio.Globals;
@@ -68,11 +66,13 @@ public class SetupActivity extends AppCompatActivity {
                 Log.d(TAG, "click connect");
                 JSONObject listenInfo = requester.requestListen(Globals.getSpotifyUsername(),
                         "tetchel");
+               /*
                 try {
-                    connectToSong(listenInfo);
+                    //connectToSong(listenInfo);
                 } catch (JSONException e) {
                     Log.e(TAG, "Terrible horrible error", e);
                 }
+                */
                startActivity(new Intent(SetupActivity.this, MainActivity.class));
             }
         });
@@ -106,43 +106,6 @@ public class SetupActivity extends AppCompatActivity {
                 hasSpotifyServiceBound = true;
             }
         }
-    }
-
-    private void connectToSong(JSONObject listenInfo) throws JSONException {
-        Log.d(TAG, listenInfo.toString());
-
-
-        if(Globals.getStreamService() == null) {
-            Toast.makeText(this, "You are not logged in!",
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        String status = listenInfo.getString("status");
-        if(!status.equals("OK")) {
-            Toast.makeText(this, status, Toast.LENGTH_LONG).show();
-        }
-
-        long serverTime = listenInfo.getLong("server_time");
-        int trackTime = listenInfo.getInt("track_time");
-        int trackLen = listenInfo.getInt("track_length");
-        String trackid = listenInfo.getString("spotify_track_id");
-        String hostusername = listenInfo.getString("host");
-
-        // Account for the listening time that elapsed in transmission
-        // Should handle the case of this being too long - if longer than track len, set to 0
-
-        long now = System.currentTimeMillis();
-        long elapsed = now - serverTime;
-        trackTime += elapsed;
-
-        if(trackTime > trackLen) {
-            Toast.makeText(this, "Current track has ended", Toast.LENGTH_LONG).show();
-        }
-
-        Globals.getStreamService().playTrack(hostusername, trackid, trackTime);
-        Toast.makeText(this, getString(R.string.now_listening_to) + ' ' + hostusername +
-                getString(R.string.apostrophes_radio), Toast.LENGTH_LONG).show();
     }
 
     @Override

@@ -1,25 +1,23 @@
 package ca.fradio.ui;
 
-import ca.fradio.Globals;
-import ca.fradio.R;
-import ca.fradio.Requester;
-
-
-import android.util.Log;
-import android.widget.Toast;
-import org.json.JSONException;
-import org.json.JSONObject;
 import android.app.Activity;
-import android.widget.ArrayAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import ca.fradio.Globals;
+import ca.fradio.R;
+import ca.fradio.Requester;
 
 public class StreamerListAdapter extends ArrayAdapter<String> {
     private static final String TAG = "StreamerListAdapter";
@@ -70,9 +68,16 @@ public class StreamerListAdapter extends ArrayAdapter<String> {
             return;
         }
 
+        String status = listenInfo.getString("status");
+        if(!status.equals("OK")) {
+            Toast.makeText(context, status, Toast.LENGTH_LONG).show();
+        }
+
         long serverTime = listenInfo.getLong("server_time");
         int trackTime = listenInfo.getInt("track_time");
+        int trackLen = listenInfo.getInt("track_length");
         String trackid = listenInfo.getString("spotify_track_id");
+        String hostusername = listenInfo.getString("host");
 
         // Account for the listening time that elapsed in transmission
         // Should handle the case of this being too long - if longer than track len, set to 0
@@ -81,7 +86,12 @@ public class StreamerListAdapter extends ArrayAdapter<String> {
         long elapsed = now - serverTime;
         trackTime += elapsed;
 
-        //Globals.getStreamService().playTrack(trackid, trackTime, 0);
-    }
+        if(trackTime > trackLen) {
+            Toast.makeText(context, "Current track has ended", Toast.LENGTH_LONG).show();
+        }
 
+        Globals.getStreamService().playTrack(hostusername, trackid, trackTime);
+        Toast.makeText(context, context.getString(R.string.now_listening_to) + ' ' + hostusername +
+                context.getString(R.string.apostrophes_radio), Toast.LENGTH_LONG).show();
+    }
 }
