@@ -1,22 +1,12 @@
 package ca.fradio;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import ca.fradio.Listener;
+import ca.fradio.spotify.MediaStateReceiver;
 
 public class MainActivity extends AppCompatActivity {
 
