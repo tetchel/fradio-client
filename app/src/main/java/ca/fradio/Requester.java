@@ -34,7 +34,7 @@ public class Requester {
      * Send a request to start BROADCASTING to the server.
      * @return The server's response, or NULL IF AN EXCEPTION OCCURS.
      */
-    public void requestBroadcast(String spotifyUsername, String spotifyTrackid,
+    public static void requestBroadcast(String spotifyUsername, String spotifyTrackid,
                                        long scrolltime, long trackLength) {
 
         new BroadcastRequester().execute(spotifyUsername, spotifyTrackid,

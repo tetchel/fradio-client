@@ -29,4 +29,17 @@ public class Globals {
     public static String getClientId() {
         return CLIENT_ID;
     }
+
+    private static String streamer;
+    public static String getStreamer() {
+        return streamer;
+    }
+    public static void setStreamer(String streamer) {
+        Globals.streamer = streamer;
+    }
+
+    private static String broadcastID;
+    public static void setBroadcastID(String tid){broadcastID = tid;}
+    public static String getBroadcastID(){return broadcastID;}
+
 }

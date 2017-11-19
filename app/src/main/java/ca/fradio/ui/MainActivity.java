@@ -61,26 +61,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //adapter = new (this, R.layout.streamer_list_item, streamers);
-        //listView.setAdapter(adapter);
-
-        // ask db for streaming users
-        /*
-        final Button button = (Button) findViewById(R.id.btn_connect);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                requester.requestListen(Globals.getSpotifyUsername(), "TheRealGoon");
-
-                Log.d("Poo", "Maybe starting listener");
-                if (!Listener.isRunning()) {
-                    Log.d("Poo", "Starting listener");
-                    Intent listenerIntent = new Intent(MainActivity.this, Listener.class);
-                    startService(listenerIntent);
-                }
-            }
-        });
-        */
-
     }
 
     @Override

@@ -48,8 +48,8 @@ public class StreamerListAdapter extends ArrayAdapter<String> {
         submitButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 try {
-                    JSONObject listenResponse =  Requester.requestListen(username,
-                            streamers.get(position));
+                    JSONObject listenResponse =  Requester.requestListen(username, streamers.get(position));
+                    Globals.setStreamer(streamers.get(position));
                     connectToSong(listenResponse);
                 } catch (JSONException e){
                     Log.e(TAG, "Could not properly parse listenResponse JSON", e);

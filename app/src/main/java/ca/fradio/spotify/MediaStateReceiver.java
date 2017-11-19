@@ -15,7 +15,6 @@ public class MediaStateReceiver extends BroadcastReceiver {
     private static final String TAG = "MediaStateReceiver";
     private IntentFilter filter;
 
-    private Requester requester = new Requester();
 
     private static final class SpotifyBroadcasts {
         static final String SPOTIFY_PACKAGE = "com.spotify.music";
@@ -88,6 +87,6 @@ public class MediaStateReceiver extends BroadcastReceiver {
     private void broadcast(String trackid, long positionMs, long trackLength) {
         Log.d(TAG, "Broadcasting trackid " + trackid + " timestamp " + positionMs);
 
-        requester.requestBroadcast(Globals.getSpotifyUsername(), trackid, positionMs, trackLength);
+        Requester.requestBroadcast(Globals.getSpotifyUsername(), trackid, positionMs, trackLength);
     }
 }

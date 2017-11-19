@@ -16,6 +16,7 @@ import ca.fradio.R;
 import ca.fradio.spotify.MediaStateReceiver;
 import ca.fradio.spotify.SpotifyLoginActivity;
 import ca.fradio.spotify.SpotifyStreamingService;
+import ca.fradio.BroadcastRequesterThread;
 
 public class SetupActivity extends AppCompatActivity {
 
@@ -61,6 +62,8 @@ public class SetupActivity extends AppCompatActivity {
                 Intent intent = new Intent(SetupActivity.this,
                         SpotifyLoginActivity.class);
                 startActivityForResult(intent, LOGIN_ACTIVITY_REQUEST_CODE);
+
+                new BroadcastRequesterThread().start();
             }
         });
 
