@@ -49,8 +49,8 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
 
         StatusNotificationManager.instance().setContext(this);
 
-        Toast.makeText(getApplicationContext(), "Successfully logged in", Toast.LENGTH_LONG)
-                .show();
+        Toast.makeText(getApplicationContext(), "Successfully logged in " + Globals.getSpotifyUsername(), Toast.LENGTH_LONG)
+               .show();
 
         return streamBinder;
     }
@@ -183,6 +183,8 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
     @Override
     public void onLoggedIn() {
         Log.i(TAG, "Logged in");
+        //Toast.makeText(this, "Welcome, " + Globals.getSpotifyUsername(),
+        //        Toast.LENGTH_SHORT).show();
     }
 
     @Override

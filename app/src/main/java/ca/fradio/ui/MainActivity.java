@@ -26,8 +26,6 @@ public class MainActivity extends AppCompatActivity {
 
         registerReceiver(msr, msr.getFilter());
 
-        Globals.setSpotifyUsername("tetchel");
-
         /* Populate list view with streamers */
         final ListView listView = (ListView) findViewById(R.id.list_streamers);
         ArrayList<String> streamers = requester.requestStreamers();

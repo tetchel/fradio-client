@@ -154,7 +154,7 @@ public class Requester {
         String url = String.format("%s://%s/%s?%s", PROTOCOL, DOMAIN, path, query);
         Log.d(TAG, "The expanded broadcast request url is " + url);
 
-        String responseStr = getFromUrl(url);
+        String responseStr = Url(url);
         try {
             JSONObject responseStrJSON = new JSONObject(responseStr);
             return responseStrJSON;
@@ -183,7 +183,7 @@ public class Requester {
         return null;
     }
 
-    public static String getFromUrl(String url) throws IOException {
+    public static String Url(String url) throws IOException {
         Log.d(TAG, "Getting from " + url);
 
         URLConnection conn = new URL(url).openConnection();
@@ -195,7 +195,7 @@ public class Requester {
         return readAllFromInputStream(is);
     }
 
-    static String readAllFromInputStream(InputStream is) throws IOException {
+    public static String readAllFromInputStream(InputStream is) throws IOException {
         StringBuilder responseBuilder = new StringBuilder();
         int i;
         while ((i = is.read()) != -1) {

@@ -13,7 +13,6 @@ import android.widget.Button;
 
 import ca.fradio.Globals;
 import ca.fradio.R;
-import ca.fradio.Requester;
 import ca.fradio.spotify.MediaStateReceiver;
 import ca.fradio.spotify.SpotifyLoginActivity;
 import ca.fradio.spotify.SpotifyStreamingService;
@@ -21,8 +20,6 @@ import ca.fradio.spotify.SpotifyStreamingService;
 public class SetupActivity extends AppCompatActivity {
 
     private static final String TAG = "Fradio-Main";
-
-    private final Requester requester = new Requester();
 
     private final MediaStateReceiver msr = new MediaStateReceiver();
 
@@ -55,8 +52,6 @@ public class SetupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_setup);
 
         registerReceiver(msr, msr.getFilter());
-
-        Globals.setSpotifyUsername("tetchel");
 
         final Button loginButton = findViewById(R.id.btn_login);
         loginButton.setOnClickListener(new View.OnClickListener() {

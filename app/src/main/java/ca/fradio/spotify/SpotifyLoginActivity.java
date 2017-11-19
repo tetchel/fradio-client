@@ -1,7 +1,9 @@
 package ca.fradio.spotify;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -10,7 +12,17 @@ import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.concurrent.ExecutionException;
+
+import javax.net.ssl.HttpsURLConnection;
+
 import ca.fradio.Globals;
+import ca.fradio.Requester;
 
 public class SpotifyLoginActivity extends Activity {
 
@@ -39,6 +51,7 @@ public class SpotifyLoginActivity extends Activity {
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
     }
 
+    @SuppressLint("StaticFieldLeak")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
@@ -49,7 +62,32 @@ public class SpotifyLoginActivity extends Activity {
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
-                    String token = response.getAccessToken();
+                    final String token = response.getAccessToken();
+
+                    try {
+                        JSONObject userInfo = new UsernameGetter().execute(token).get();
+
+                        String username = userInfo.getString("id");
+
+                        if(username != null && !username.isEmpty()) {
+                            Globals.setSpotifyUsername(username);
+                        }
+                        else {
+                            Log.e(TAG, "THE USERNAME WAS NULL OR EMPTY OH NO");
+                        }
+                        String product = userInfo.getString("product");
+
+                        if(!product.equals("premium")) {
+                            Toast.makeText(this, username + " IS NOT A PREMIUM USER!",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                        else {
+                            Toast.makeText(this, "Login successful as " + username,  
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    } catch (JSONException | InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                    }
 
                     Intent result = new Intent();
                     result.putExtra("token", token);
@@ -73,6 +111,32 @@ public class SpotifyLoginActivity extends Activity {
                             "Login failure - You'll have to try again.",
                             Toast.LENGTH_LONG).show();
             }
+        }
+    }
+
+    private static class UsernameGetter extends AsyncTask<String, Void, JSONObject> {
+        @Override
+        protected JSONObject doInBackground(String... strings) {
+            String token = strings[0];
+            try {
+                URL meEndpoint = new URL("https://api.spotify.com/v1/me");
+                HttpsURLConnection conn = (HttpsURLConnection)
+                        meEndpoint.openConnection();
+                conn.setRequestProperty("Authorization:", "Bearer " + token);
+
+                int responseCode = conn.getResponseCode();
+                Log.d(TAG, "Response from ME : " + responseCode);
+                String response = Requester
+                        .readAllFromInputStream(conn.getInputStream());
+                JSONObject responseObj = new JSONObject(response);
+                Log.d(TAG, "Received ME response: " + response);
+
+                return responseObj;
+
+            } catch (JSONException | IOException e) {
+                e.printStackTrace();
+            }
+            return null;
         }
     }
 
