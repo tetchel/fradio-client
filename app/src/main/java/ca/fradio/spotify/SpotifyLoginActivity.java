@@ -129,7 +129,7 @@ public class SpotifyLoginActivity extends Activity {
                 String response = Requester
                         .readAllFromInputStream(conn.getInputStream());
                 JSONObject responseObj = new JSONObject(response);
-                Log.d(TAG, "Received ME response: " + response);
+                //Log.d(TAG, "Received ME response: " + response);
 
                 return responseObj;
 

@@ -32,12 +32,21 @@ public class StreamerListAdapter extends ArrayAdapter<String> {
         this.context = context;
         this.username = username;
         this.streamers = streamers;
+
+        // You cannot stream from yourself
+        for(int i = 0; i < streamers.size(); i++) {
+            if(streamers.get(i).equalsIgnoreCase(username)) {
+                streamers.remove(i);
+            }
+        }
+
         requester = new Requester();
     }
 
     @Override
     public View getView(final int position, View view, ViewGroup parent) {
         Log.d(TAG, "getview");
+
         LayoutInflater inflater = context.getLayoutInflater();
         View rowView= inflater.inflate(R.layout.streamer_list_item, null, true);
 
@@ -48,9 +57,12 @@ public class StreamerListAdapter extends ArrayAdapter<String> {
         submitButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 try {
-                    JSONObject listenResponse =  Requester.requestListen(username, streamers.get(position));
+                    JSONObject listenResponse =  Requester.requestListen(username,
+                            streamers.get(position));
                     Globals.setStreamer(streamers.get(position));
                     connectToSong(listenResponse);
+                    Toast.makeText(context, context.getString(R.string.now_listening_to) + " "
+                            + streamers.get(position), Toast.LENGTH_SHORT).show();
                 } catch (JSONException e){
                     Log.e(TAG, "Could not properly parse listenResponse JSON", e);
                 }

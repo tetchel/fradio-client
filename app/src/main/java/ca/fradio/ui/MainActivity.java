@@ -18,10 +18,12 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "Fradio-Main";
 
-    private final MediaStateReceiver msr = new MediaStateReceiver();
+    private final MediaStateReceiver _msr = new MediaStateReceiver();
     //private Adapter adapter;
 
-    private boolean isBroadcasting = false;
+    private boolean _isBroadcasting = false;
+
+    private StreamerListAdapter _listAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,45 +32,55 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         /* Populate list view with streamers */
-        final ListView listView = (ListView) findViewById(R.id.list_streamers);
+        final ListView listView = findViewById(R.id.list_streamers);
         ArrayList<String> streamers = requester.requestStreamers();
         String username = Globals.getSpotifyUsername();
 
-        StreamerListAdapter streamerListAdapter =
-                new StreamerListAdapter(this, username, streamers);
+        _listAdapter = new StreamerListAdapter(this, username, streamers);
 
-        listView.setAdapter(streamerListAdapter);
+        listView.setAdapter(_listAdapter);
 
         final Button broadcastBtn = findViewById(R.id.btn_broadcast);
         broadcastBtn.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
-                if(isBroadcasting) {
-                    unregisterReceiver(msr);
-                    isBroadcasting = false;
-                    Toast.makeText(MainActivity.this, "Stopped broadcasting",
-                            Toast.LENGTH_SHORT).show();
-                    broadcastBtn.setText("Start Streaming");
-                }
-                else {
-                    registerReceiver(msr, msr.getFilter());
-                    isBroadcasting = true;
-                    Toast.makeText(MainActivity.this, "Started broadcasting",
-                            Toast.LENGTH_SHORT).show();
-                    broadcastBtn.setText("Stop Streaming");
-                }
+                toggleIsBroadcasting();
             }
         });
+
+    }
+
+    private void toggleIsBroadcasting() {
+        final Button broadcastBtn = findViewById(R.id.btn_broadcast);
+        if(_isBroadcasting) {
+            unregisterReceiver(_msr);
+            _isBroadcasting = false;
+            Toast.makeText(MainActivity.this, "Stopped broadcasting",
+                    Toast.LENGTH_SHORT).show();
+            broadcastBtn.setText("Start Streaming");
+        }
+        else {
+            registerReceiver(_msr, _msr.getFilter());
+            _isBroadcasting = true;
+            Toast.makeText(MainActivity.this, "Started broadcasting",
+                    Toast.LENGTH_SHORT).show();
+            broadcastBtn.setText("Stop Streaming");
+        }
+
+        // If you are broadcasting, do not allow connecting to streams
+        // If you are not broadcasting, re-enable connecting to streams
+        for(View view : ((View)findViewById(R.id.list_streamers)).getTouchables()) {
+            view.setEnabled(!_isBroadcasting);
+        }
 
     }
 
     @Override
     protected void onDestroy() {
        super.onDestroy();
-       if(isBroadcasting) {
-           unregisterReceiver(msr);
-           isBroadcasting = false;
+       if(_isBroadcasting) {
+           unregisterReceiver(_msr);
+           _isBroadcasting = false;
        }
     }
 }
