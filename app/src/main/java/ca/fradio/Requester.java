@@ -101,7 +101,9 @@ public class Requester {
                 String query = "host" + PARAM_SPOTIFY_USERNAME + '=' + hostToListenTo +
                             "&listener" + PARAM_SPOTIFY_USERNAME + '=' + spotifyUsername;
 
-                return doRequest("listen", query);
+                JSONObject res = doRequest("listen", query);
+                Log.d("Poo", res.toString());
+                return res;
             } catch (IOException e) {
                 Log.e(TAG, "Catastrophe!", e);
                 return null;
@@ -114,9 +116,9 @@ public class Requester {
         Log.d(TAG, "The expanded broadcast request url is " + url);
 
         String responseStr = Utility.getFromUrl(url);
-
         try {
-            return new JSONObject(responseStr);
+            JSONObject responseStrJSON = new JSONObject(responseStr);
+            return responseStrJSON;
         } catch (JSONException e) {
             e.printStackTrace();
         }

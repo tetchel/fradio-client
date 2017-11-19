@@ -1,11 +1,13 @@
 package ca.fradio;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import ca.fradio.Listener;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,6 +30,13 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 requester.requestListen(Globals.getSpotifyUsername(), "TheRealGoon");
+
+                Log.d("Poo", "Maybe starting listener");
+                if (!Listener.isRunning()) {
+                    Log.d("Poo", "Starting listener");
+                    Intent listenerIntent = new Intent(MainActivity.this, Listener.class);
+                    startService(listenerIntent);
+                }
             }
         });
 
