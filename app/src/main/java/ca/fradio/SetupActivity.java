@@ -117,9 +117,9 @@ public class SetupActivity extends AppCompatActivity {
         // Account for the listening time that elapsed in transmission
         // Should handle the case of this being too long - if longer than track len, set to 0
 
-        //long now = System.currentTimeMillis();
-        //long elapsed = now - serverTime;
-        //trackTime += elapsed;
+        long now = System.currentTimeMillis();
+        long elapsed = now - serverTime;
+        trackTime += elapsed;
 
         Globals.getStreamService().playTrack(trackid, trackTime);
     }

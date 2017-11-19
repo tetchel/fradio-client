@@ -45,6 +45,8 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
 
         setUpNetworkStateReceiver();
 
+        StatusNotificationManager.instance().setContext(this);
+
         Toast.makeText(getApplicationContext(), "Successfully logged in", Toast.LENGTH_LONG)
                 .show();
 
@@ -214,21 +216,40 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
     public void playTrack(String trackId, int position) {
         player.playUri(mOperationCallback, trackId, 0, position);
         Log.d(TAG, "playing " + trackId + " from " + position);
+
+        /*
+        if(player.getMetadata().currentTrack.durationMs < position) {
+            Toast.makeText(this, player.getMetadata().currentTrack.name + " is over.",
+                    Toast.LENGTH_SHORT).show();
+
+            // TODO remove
+            player.playUri(mOperationCallback, trackId, 0, 0);
+        }
+        */
+
+        StatusNotificationManager.instance().playing(player.getMetadata().currentTrack);
     }
 
     public void resume() {
         Log.d(TAG, "Resume");
         player.playUri(mOperationCallback, player.getMetadata().contextUri, 0, (int)
                 player.getPlaybackState().positionMs);
+
+        StatusNotificationManager.instance().playing(player.getMetadata().currentTrack);
     }
 
     public void pause() {
         Log.d(TAG, "pause");
         player.pause(mOperationCallback);
+        StatusNotificationManager.instance().paused(player.getMetadata().currentTrack);
     }
 
     public void seek(int position) {
         Log.d(TAG, "seek");
         player.seekToPosition(mOperationCallback, position);
+    }
+
+    public void stop() {
+        Log.d(TAG, "stop");
     }
 }
