@@ -37,9 +37,8 @@ public class BroadcastRequesterThread extends Thread {
             }
 
             Log.d("BroadcastRequester", newBroadcastID + " vs. " + currBroadcastID);
-            if (newBroadcastID != currBroadcastID){
+            if (newBroadcastID.equals(currBroadcastID)){
                 try {
-                    Globals.setBroadcastID(newBroadcastID);
                     connectToSong(listenResponse);
                     Log.d("BroadcastRequesterThrea", "STARTING NEW SONG THROUGH BRT");
                 }catch(JSONException e) {
@@ -47,6 +46,7 @@ public class BroadcastRequesterThread extends Thread {
                 }
 
             }
+            Globals.setBroadcastID(newBroadcastID);
 
         }
 
