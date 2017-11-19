@@ -11,8 +11,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import org.json.JSONObject;
-
 import ca.fradio.Globals;
 import ca.fradio.R;
 import ca.fradio.Requester;
@@ -60,23 +58,6 @@ public class SetupActivity extends AppCompatActivity {
 
         Globals.setSpotifyUsername("tetchel");
 
-        final Button button = findViewById(R.id.btn_connect);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Log.d(TAG, "click connect");
-                JSONObject listenInfo = requester.requestListen(Globals.getSpotifyUsername(),
-                        "tetchel");
-               /*
-                try {
-                    //connectToSong(listenInfo);
-                } catch (JSONException e) {
-                    Log.e(TAG, "Terrible horrible error", e);
-                }
-                */
-               startActivity(new Intent(SetupActivity.this, MainActivity.class));
-            }
-        });
-
         final Button loginButton = findViewById(R.id.btn_login);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,6 +85,8 @@ public class SetupActivity extends AppCompatActivity {
                 serviceIntent.putExtra("token", token);
                 bindService(serviceIntent, streamServiceConn, Context.BIND_AUTO_CREATE);
                 hasSpotifyServiceBound = true;
+
+                startActivity(new Intent(this, MainActivity.class));
             }
         }
     }
