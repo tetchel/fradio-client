@@ -20,6 +20,7 @@ android {
 
 repositories {
     mavenCentral()
+    jcenter()
     flatDir {
         dirs 'libs'
     }
@@ -34,9 +35,10 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     // This library handles authentication and authorization
-    //compile 'com.spotify.android:auth:1.0.0-alpha'
+    implementation 'com.spotify.android:auth:1.0.0-alpha'
     // This library handles music playback
-    //compile 'com.spotify.sdk:spotify-player-24-noconnect-2.20b@aar'
+    //compile 'spotify-player-24-noconnect-2.20b@aar'
+    implementation 'com.spotify.sdk:spotify-player-24-noconnect-2.20b@aar'
     //compile project('spotifysdk-1.0.0-beta4')
-    implementation project(':spotifysdk-1.0.0-beta4')
+    //implementation project(':spotifysdk-1.0.0-beta4')
 }
