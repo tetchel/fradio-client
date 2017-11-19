@@ -13,12 +13,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".MainActivity"/>
+        <activity android:name=".ui.MainActivity"/>
 
         <service android:name=".spotify.SpotifyStreamingService" />
         <service android:name=".Listener" />
 
-        <activity android:name=".SetupActivity">
+        <activity android:name=".ui.SetupActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

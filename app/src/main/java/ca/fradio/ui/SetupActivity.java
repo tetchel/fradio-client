@@ -1,4 +1,4 @@
-package ca.fradio;
+package ca.fradio.ui;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -15,6 +15,9 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import ca.fradio.Globals;
+import ca.fradio.R;
+import ca.fradio.Requester;
 import ca.fradio.spotify.MediaStateReceiver;
 import ca.fradio.spotify.SpotifyLoginActivity;
 import ca.fradio.spotify.SpotifyStreamingService;

@@ -1,4 +1,4 @@
-package ca.fradio;
+package ca.fradio.ui;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -6,6 +6,9 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import ca.fradio.Globals;
+import ca.fradio.R;
+import ca.fradio.Requester;
 import ca.fradio.spotify.MediaStateReceiver;
 
 public class MainActivity extends AppCompatActivity {
