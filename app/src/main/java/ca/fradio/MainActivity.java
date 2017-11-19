@@ -26,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
 
         Globals.setSpotifyUsername("tetchel");
 
+        // ask db for streaming users
+        /*
         final Button button = (Button) findViewById(R.id.btn_connect);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        */
 
     }
 }
