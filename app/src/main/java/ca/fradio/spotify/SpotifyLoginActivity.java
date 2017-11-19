@@ -82,8 +82,8 @@ public class SpotifyLoginActivity extends Activity {
                                     Toast.LENGTH_LONG).show();
                         }
                         else {
-                            Toast.makeText(this, "Login successful as " + username,  
-                                    Toast.LENGTH_LONG).show();
+                            Toast.makeText(this, "Successfully logged in as "
+                                            + username,  Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException | InterruptedException | ExecutionException e) {
                         e.printStackTrace();

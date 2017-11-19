@@ -49,9 +49,6 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
 
         StatusNotificationManager.instance().setContext(this);
 
-        Toast.makeText(getApplicationContext(), "Successfully logged in " + Globals.getSpotifyUsername(), Toast.LENGTH_LONG)
-               .show();
-
         return streamBinder;
     }
 

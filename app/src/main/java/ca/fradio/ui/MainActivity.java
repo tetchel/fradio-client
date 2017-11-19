@@ -2,7 +2,10 @@ package ca.fradio.ui;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -18,13 +21,13 @@ public class MainActivity extends AppCompatActivity {
     private final MediaStateReceiver msr = new MediaStateReceiver();
     //private Adapter adapter;
 
+    private boolean isBroadcasting = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Requester requester = new Requester();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        registerReceiver(msr, msr.getFilter());
 
         /* Populate list view with streamers */
         final ListView listView = (ListView) findViewById(R.id.list_streamers);
@@ -35,6 +38,29 @@ public class MainActivity extends AppCompatActivity {
                 new StreamerListAdapter(this, username, streamers);
 
         listView.setAdapter(streamerListAdapter);
+
+        final Button broadcastBtn = findViewById(R.id.btn_broadcast);
+        broadcastBtn.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                if(isBroadcasting) {
+                    unregisterReceiver(msr);
+                    isBroadcasting = false;
+                    Toast.makeText(MainActivity.this, "Stopped broadcasting",
+                            Toast.LENGTH_SHORT).show();
+                    broadcastBtn.setText("Start Streaming");
+                }
+                else {
+                    registerReceiver(msr, msr.getFilter());
+                    isBroadcasting = true;
+                    Toast.makeText(MainActivity.this, "Started broadcasting",
+                            Toast.LENGTH_SHORT).show();
+                    broadcastBtn.setText("Stop Streaming");
+                }
+            }
+        });
+
         //adapter = new (this, R.layout.streamer_list_item, streamers);
         //listView.setAdapter(adapter);
 
@@ -60,6 +86,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
        super.onDestroy();
-       unregisterReceiver(msr);
+       if(isBroadcasting) {
+           unregisterReceiver(msr);
+           isBroadcasting = false;
+       }
     }
 }

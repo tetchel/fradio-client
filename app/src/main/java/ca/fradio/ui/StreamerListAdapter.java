@@ -37,6 +37,7 @@ public class StreamerListAdapter extends ArrayAdapter<String> {
 
     @Override
     public View getView(final int position, View view, ViewGroup parent) {
+        Log.d(TAG, "getview");
         LayoutInflater inflater = context.getLayoutInflater();
         View rowView= inflater.inflate(R.layout.streamer_list_item, null, true);
 
@@ -47,7 +48,8 @@ public class StreamerListAdapter extends ArrayAdapter<String> {
         submitButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 try {
-                    JSONObject listenResponse =  Requester.requestListen(username, streamers.get(position));
+                    JSONObject listenResponse =  Requester.requestListen(username,
+                            streamers.get(position));
                     connectToSong(listenResponse);
                 } catch (JSONException e){
                     Log.e(TAG, "Could not properly parse listenResponse JSON", e);
@@ -60,7 +62,6 @@ public class StreamerListAdapter extends ArrayAdapter<String> {
 
     private void connectToSong(JSONObject listenInfo) throws JSONException {
         Log.d(TAG, listenInfo.toString());
-
 
         if(Globals.getStreamService() == null) {
             Toast.makeText(context, "You are not logged in!",
