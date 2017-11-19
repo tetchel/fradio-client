@@ -1,2 +1,0 @@
-configurations.create("default")
-artifacts.add("default", file('spotifysdk-1.0.0-beta4.aar'))

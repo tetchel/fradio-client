@@ -6,16 +6,21 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.spotify.sdk.android.Spotify;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
-import com.spotify.sdk.android.player.ConnectionStateCallback;
-import com.spotify.sdk.android.player.Player;
-import com.spotify.sdk.android.player.Spotify;
+import com.spotify.sdk.android.authentication.SpotifyAuthentication;
+import com.spotify.sdk.android.playback.ConnectionStateCallback;
+import com.spotify.sdk.android.playback.Player;
+import com.spotify.sdk.android.playback.PlayerNotificationCallback;
+import com.spotify.sdk.android.playback.PlayerState;
 
-public class SpotifyStreamingClient extends Activity implements
-    PlayerNotificationCallback, ConnectionStateCallback {
+public class SpotifyStreamingActivity extends Activity implements
+        PlayerNotificationCallback, ConnectionStateCallback {
+
+    private static final String TAG = "SpotifyStreamingAct";
 
     // TODO: Replace with your client ID
-    private static final String CLIENT_ID = "";
+    private static final String CLIENT_ID = "5a87a7cf3de84cb4968337178a9bbdd8";
     // TODO: Replace with your redirect URI
     private static final String REDIRECT_URI = "samplecallback://callback";
 
@@ -36,17 +41,19 @@ public class SpotifyStreamingClient extends Activity implements
         if (uri != null) {
             AuthenticationResponse response = SpotifyAuthentication.parseOauthResponse(uri);
             Spotify spotify = new Spotify(response.getAccessToken());
-            mPlayer = spotify.getPlayer(this, "My Company Name", this, new Player.InitializationObserver() {
+            mPlayer = spotify.getPlayer(this, "My Company Name", this,
+                    new Player.InitializationObserver() {
                 @Override
                 public void onInitialized() {
-                    mPlayer.addConnectionStateCallback(MainActivity.this);
-                    mPlayer.addPlayerNotificationCallback(MainActivity.this);
+                    mPlayer.addConnectionStateCallback(SpotifyStreamingActivity.this);
+                    mPlayer.addPlayerNotificationCallback(SpotifyStreamingActivity.this);
                     mPlayer.play("spotify:track:2TpxZ7JUBn3uw46aR7qd6V");
                 }
 
                 @Override
                 public void onError(Throwable throwable) {
-                    Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
+                    Log.e(TAG, "Could not initialize player: " +
+                            throwable.getMessage());
                 }
             });
         }
@@ -54,41 +61,42 @@ public class SpotifyStreamingClient extends Activity implements
 
     @Override
     public void onLoggedIn() {
-        Log.d("MainActivity", "User logged in");
+        Log.d(TAG, "User logged in");
     }
 
     @Override
     public void onLoggedOut() {
-        Log.d("MainActivity", "User logged out");
+        Log.d(TAG, "User logged out");
     }
 
     @Override
     public void onLoginFailed(Throwable error) {
-        Log.d("MainActivity", "Login failed");
+        Log.d(TAG, "Login failed");
     }
 
     @Override
     public void onTemporaryError() {
-        Log.d("MainActivity", "Temporary error occurred");
+        Log.d(TAG, "Temporary error occurred");
     }
 
     @Override
     public void onNewCredentials(String s) {
-        Log.d("MainActivity", "User credentials blob received");
+        Log.d(TAG, "User credentials blob received");
     }
 
     @Override
     public void onConnectionMessage(String message) {
-        Log.d("MainActivity", "Received connection message: " + message);
+        Log.d(TAG, "Received connection message: " + message);
     }
 
     @Override
     public void onPlaybackEvent(EventType eventType, PlayerState playerState) {
-        Log.d("MainActivity", "Playback event received: " + eventType.name());
+        Log.d(TAG, "Playback event received: " + eventType.name());
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Spotify.destroyPlayer(this);
     }
 }
