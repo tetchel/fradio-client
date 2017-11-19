@@ -15,16 +15,15 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "Fradio-Main";
 
-    private Requester requester;
+    private final MediaStateReceiver msr = new MediaStateReceiver();
     //private Adapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        requester = new Requester();
+        Requester requester = new Requester();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final MediaStateReceiver msr = new MediaStateReceiver();
         registerReceiver(msr, msr.getFilter());
 
         Globals.setSpotifyUsername("tetchel");
@@ -58,5 +57,11 @@ public class MainActivity extends AppCompatActivity {
         });
         */
 
+    }
+
+    @Override
+    protected void onDestroy() {
+       super.onDestroy();
+       unregisterReceiver(msr);
     }
 }
