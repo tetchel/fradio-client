@@ -26,9 +26,13 @@ public class SetupActivity extends AppCompatActivity {
 
     private static final String TAG = "Fradio-Main";
 
-    private Requester requester;
+    private final Requester requester = new Requester();
+
+    private final MediaStateReceiver msr = new MediaStateReceiver();
 
     public static final int LOGIN_ACTIVITY_REQUEST_CODE = 14321;
+
+    private boolean hasSpotifyServiceBound = false;
 
     /** Defines callbacks for service binding, passed to bindService() */
     private static ServiceConnection streamServiceConn = new ServiceConnection() {
@@ -51,11 +55,9 @@ public class SetupActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        requester = new Requester();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
 
-        final MediaStateReceiver msr = new MediaStateReceiver();
         registerReceiver(msr, msr.getFilter());
 
         Globals.setSpotifyUsername("tetchel");
@@ -100,6 +102,7 @@ public class SetupActivity extends AppCompatActivity {
                         SpotifyStreamingService.class);
                 serviceIntent.putExtra("token", token);
                 bindService(serviceIntent, streamServiceConn, Context.BIND_AUTO_CREATE);
+                hasSpotifyServiceBound = true;
             }
         }
     }
@@ -116,6 +119,7 @@ public class SetupActivity extends AppCompatActivity {
         long serverTime = listenInfo.getLong("server_time");
         int trackTime = listenInfo.getInt("track_time");
         String trackid = listenInfo.getString("spotify_track_id");
+        String hostusername = listenInfo.getString("host");
 
         // Account for the listening time that elapsed in transmission
         // Should handle the case of this being too long - if longer than track len, set to 0
@@ -124,12 +128,17 @@ public class SetupActivity extends AppCompatActivity {
         long elapsed = now - serverTime;
         trackTime += elapsed;
 
-        Globals.getStreamService().playTrack(trackid, trackTime);
+        Globals.getStreamService().playTrack(hostusername, trackid, trackTime);
+        Toast.makeText(this, getString(R.string.now_listening_to) + ' ' + hostusername +
+                getString(R.string.apostrophes_radio), Toast.LENGTH_LONG).show();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbindService(streamServiceConn);
+        if(hasSpotifyServiceBound) {
+            unbindService(streamServiceConn);
+        }
+        unregisterReceiver(msr);
     }
 }

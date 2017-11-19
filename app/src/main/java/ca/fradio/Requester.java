@@ -8,9 +8,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -118,9 +115,11 @@ public class Requester {
                         "&listener" + PARAM_SPOTIFY_USERNAME + '=' + spotifyUsername;
 
                 JSONObject res = doRequest("listen", query);
+                // Also put the host into the result
+                res.put("host", hostToListenTo);
                 Log.d("Poo", res.toString());
                 return res;
-            } catch (IOException e) {
+            } catch (JSONException | IOException e) {
                 Log.e(TAG, "Catastrophe!", e);
                 return null;
             }

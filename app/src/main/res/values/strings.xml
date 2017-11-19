@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Fradio</string>
+    <string name="apostrophes_radio">\'s Radio</string>
+    <string name="now_listening_to">Now Listening to</string>
 </resources>

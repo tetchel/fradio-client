@@ -4,8 +4,6 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.support.v4.app.NotificationCompat;
 
-import com.spotify.sdk.android.player.Metadata;
-
 import ca.fradio.R;
 
 public class StatusNotificationManager {
@@ -33,24 +31,18 @@ public class StatusNotificationManager {
         context = c;
 
         builder = new NotificationCompat.Builder(context)
-                .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentTitle(context.getString(R.string.app_name));
+                .setSmallIcon(R.drawable.ic_launcher_background);   //  should be album art
 
         notificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
-    public void playing(Metadata.Track track) {
-        builder.setContentText(track.name);
-        notificationManager.notify(NOTIF_ID, builder.build());
-    }
-
-    public void paused(Metadata.Track track) {
-        builder.setContentText("Paused: " + track.name);
-        notificationManager.notify(NOTIF_ID, builder.build());
-    }
-
     public void stop() {
         notificationManager.cancel(NOTIF_ID);
+    }
+
+    public void setMsg(String title, String msg) {
+        builder.setContentText(msg).setContentTitle(title);
+        notificationManager.notify(NOTIF_ID, builder.build());
     }
 }

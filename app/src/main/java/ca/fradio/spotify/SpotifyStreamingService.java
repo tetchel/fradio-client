@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -23,6 +24,7 @@ import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
 import ca.fradio.Globals;
+import ca.fradio.R;
 
 public class SpotifyStreamingService extends Service implements ConnectionStateCallback,
         Player.NotificationCallback {
@@ -191,6 +193,7 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
     @Override
     public void onLoginFailed(Error e) {
         Log.e(TAG, "Login FAILED: " + e.toString());
+        Toast.makeText(this, "Login FAILED: " + e.toString(), Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -213,7 +216,7 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
         Log.d(TAG, "Playback ERROR received: " + error);
     }
 
-    public void playTrack(String trackId, int position) {
+    public void playTrack(String hostusername, String trackId, int position) {
         player.playUri(mOperationCallback, trackId, 0, position);
         Log.d(TAG, "playing " + trackId + " from " + position);
 
@@ -229,26 +232,61 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
         }
         */
 
-        StatusNotificationManager.instance().playing(player.getMetadata().currentTrack);
+        new UpdateNotificationTask().execute("", hostusername);
     }
 
-    public void resume() {
+    public void resume(String hostusername) {
         Log.d(TAG, "Resume");
         player.playUri(mOperationCallback, player.getMetadata().contextUri, 0, (int)
                 player.getPlaybackState().positionMs);
 
-        StatusNotificationManager.instance().playing(player.getMetadata().currentTrack);
+        new UpdateNotificationTask().execute("", hostusername);
     }
 
-    public void pause() {
+    public void pause(String hostusername) {
         Log.d(TAG, "pause");
         player.pause(mOperationCallback);
-        StatusNotificationManager.instance().paused(player.getMetadata().currentTrack);
+        new UpdateNotificationTask().execute(" (Paused)", hostusername);
     }
 
     public void seek(int position) {
         Log.d(TAG, "seek");
         player.seekToPosition(mOperationCallback, position);
+    }
+
+    private class UpdateNotificationTask extends AsyncTask<String, Void, Void> {
+
+        // 1 string parameter is a message to display after the song
+        @Override
+        protected Void doInBackground(String... strings) {
+            String msg = strings[0];
+            String host = strings[1];
+
+            Log.d(TAG, "Got msg: " + msg);
+
+            // in ms
+            int elapsed = 0;
+            while(elapsed < 5000) {
+                try {
+                    Thread.sleep(500);
+                    elapsed += 500;
+                    if (player.getMetadata().currentTrack.name != null) {
+                        String name = player.getMetadata().currentTrack.name;
+                        Log.d(TAG, "Updating notification for song: " + name);
+                        StatusNotificationManager.instance().setMsg(
+                                host + getString(R.string.apostrophes_radio),
+                                name + " " + msg);
+                        break;
+                    }
+                }
+                catch(InterruptedException | NullPointerException e) {
+                    e.printStackTrace();
+                    // pass
+                }
+            }
+
+            return null;
+        }
     }
 
     public void stop() {
