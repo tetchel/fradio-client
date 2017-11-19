@@ -1,6 +1,6 @@
 package ca.fradio;
 
-import android.app.Application;
+import ca.fradio.spotify.SpotifyStreamingService;
 
 public class Globals {
 
@@ -12,5 +12,21 @@ public class Globals {
 
     public static String getSpotifyUsername() {
         return spotifyUsername;
+    }
+
+    private static SpotifyStreamingService streamService;
+
+    public static void setStreamService(SpotifyStreamingService newStreamService) {
+        streamService = newStreamService;
+    }
+
+    public static SpotifyStreamingService getStreamService() {
+        return streamService;
+    }
+
+    private static final String CLIENT_ID = "43e13eb4a573489e8413bc9d83c95719";
+
+    public static String getClientId() {
+        return CLIENT_ID;
     }
 }

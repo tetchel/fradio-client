@@ -1,4 +1,4 @@
-package ca.fradio;
+package ca.fradio.spotify;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,6 +7,9 @@ import android.content.IntentFilter;
 import android.util.Log;
 
 import org.json.JSONObject;
+
+import ca.fradio.Globals;
+import ca.fradio.Requester;
 
 // Receiver for media events. Reacts to song change, play/pause, seek, etc.
 public class MediaStateReceiver extends BroadcastReceiver {
