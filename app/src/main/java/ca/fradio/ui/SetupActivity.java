@@ -73,6 +73,7 @@ public class SetupActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     Log.e(TAG, "Terrible horrible error", e);
                 }
+               startActivity(new Intent(SetupActivity.this, MainActivity.class));
             }
         });
 
@@ -109,6 +110,7 @@ public class SetupActivity extends AppCompatActivity {
 
     private void connectToSong(JSONObject listenInfo) throws JSONException {
         Log.d(TAG, listenInfo.toString());
+
 
         if(Globals.getStreamService() == null) {
             Toast.makeText(this, "You are not logged in!",

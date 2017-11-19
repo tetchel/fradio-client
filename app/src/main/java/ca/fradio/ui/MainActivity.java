@@ -32,6 +32,12 @@ public class MainActivity extends AppCompatActivity {
         /* Populate list view with streamers */
         final ListView listView = (ListView) findViewById(R.id.list_streamers);
         ArrayList<String> streamers = requester.requestStreamers();
+        String username = Globals.getSpotifyUsername();
+
+        StreamerListAdapter streamerListAdapter =
+                new StreamerListAdapter(this, username, streamers);
+
+        listView.setAdapter(streamerListAdapter);
         //adapter = new (this, R.layout.streamer_list_item, streamers);
         //listView.setAdapter(adapter);
 

@@ -30,7 +30,7 @@ public class Requester {
      * Send a request to start BROADCASTING to the server.
      * @return The server's response, or NULL IF AN EXCEPTION OCCURS.
      */
-    public JSONObject requestBroadcast(String spotifyUsername, String spotifyTrackid, long scrolltime) {
+    public static JSONObject requestBroadcast(String spotifyUsername, String spotifyTrackid, long scrolltime) {
 
         try {
             return new BroadcastRequester().execute(spotifyUsername, spotifyTrackid,
@@ -43,7 +43,7 @@ public class Requester {
         return null;
     }
 
-    public JSONObject requestListen(String spotifyUsername, String hostToListenTo) {
+    public static JSONObject requestListen(String spotifyUsername, String hostToListenTo) {
         try {
             return new ListenRequester().execute(spotifyUsername, hostToListenTo).get();
         } catch (InterruptedException e) {
@@ -54,7 +54,7 @@ public class Requester {
         return null;
     }
 
-    public ArrayList<String> requestStreamers() {
+    public static ArrayList<String> requestStreamers() {
         try {
 
             return parseJSONArray(new StreamersRequester().execute().get().getJSONArray("streamers"));
