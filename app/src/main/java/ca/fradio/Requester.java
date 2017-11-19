@@ -36,7 +36,6 @@ public class Requester {
      */
     public JSONObject requestBroadcast(String spotifyUsername, String spotifyTrackid,
                                        long scrolltime, long trackLength) {
-
         try {
             return new BroadcastRequester().execute(spotifyUsername, spotifyTrackid,
                     "" + scrolltime, "" + trackLength).get();
@@ -48,7 +47,7 @@ public class Requester {
         return null;
     }
 
-    public JSONObject requestListen(String spotifyUsername, String hostToListenTo) {
+    public static JSONObject requestListen(String spotifyUsername, String hostToListenTo) {
         try {
             return new ListenRequester().execute(spotifyUsername, hostToListenTo).get();
         } catch (InterruptedException e) {
@@ -59,7 +58,7 @@ public class Requester {
         return null;
     }
 
-    public ArrayList<String> requestStreamers() {
+    public static ArrayList<String> requestStreamers() {
         try {
 
             return parseJSONArray(new StreamersRequester().execute().get().getJSONArray("streamers"));
