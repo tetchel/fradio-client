@@ -35,10 +35,10 @@ public class Requester {
      * @return The server's response, or NULL IF AN EXCEPTION OCCURS.
      */
     public static void requestBroadcast(String spotifyUsername, String spotifyTrackid,
-                                       long scrolltime, long trackLength) {
+                                       long scrolltime, long trackLength, boolean isPlaying) {
 
         new BroadcastRequester().execute(spotifyUsername, spotifyTrackid,
-                "" + scrolltime, "" + trackLength);
+                "" + scrolltime, "" + trackLength, "" + isPlaying);
     }
 
     public static JSONObject requestListen(String spotifyUsername, String hostToListenTo) {
@@ -69,6 +69,7 @@ public class Requester {
             String spotifyTrackid = strings[1];
             long scrolltime = Long.parseLong(strings[2]);
             long length = Long.parseLong(strings[3]);
+            boolean isPlaying = Boolean.parseBoolean(strings[4]);
 
             if(spotifyUsername == null || spotifyTrackid == null) {
                 Log.e(TAG, "NPE error!");
