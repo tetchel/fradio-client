@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import static ca.fradio.Requester.readAllFromInputStream;
+
 public class Listener extends Service {
 
     private static final String TAG = "ListenerService";
@@ -121,7 +123,7 @@ class ListenerThread extends Thread {
                 Socket acceptance = listenerSocket.accept();
                 Log.d(TAG, "Accepted something");
 
-                String request = Utility.readAllFromInputStream(acceptance.getInputStream());
+                String request = readAllFromInputStream(acceptance.getInputStream());
 
                 Log.d(TAG, request);
             }

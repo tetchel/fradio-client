@@ -8,6 +8,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -23,18 +26,20 @@ public class Requester {
             ENCODING = "UTF-8",
 
             PARAM_SPOTIFY_USERNAME = "spotifyusername",
-            PARAM_SPOTIFY_TRACK = "spotifytrackid",
-            PARAM_SCROLLTIME = "scrolltime";
+            PARAM_SPOTIFY_TRACK = "trackid",
+            PARAM_SCROLLTIME = "t",
+            PARAM_LENGTH="len";
 
     /**
      * Send a request to start BROADCASTING to the server.
      * @return The server's response, or NULL IF AN EXCEPTION OCCURS.
      */
-    public JSONObject requestBroadcast(String spotifyUsername, String spotifyTrackid, long scrolltime) {
+    public JSONObject requestBroadcast(String spotifyUsername, String spotifyTrackid,
+                                       long scrolltime, long trackLength) {
 
         try {
             return new BroadcastRequester().execute(spotifyUsername, spotifyTrackid,
-                    "" + scrolltime).get();
+                    "" + scrolltime, "" + trackLength).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -74,6 +79,7 @@ public class Requester {
             String spotifyUsername = strings[0];
             String spotifyTrackid = strings[1];
             long scrolltime = Long.parseLong(strings[2]);
+            long length = Long.parseLong(strings[3]);
 
             if(spotifyUsername == null || spotifyTrackid == null) {
                 Log.e(TAG, "NPE error!");
@@ -87,10 +93,11 @@ public class Requester {
                 spotifyTrackid = URLEncoder.encode(spotifyTrackid, ENCODING);
 
                 String query = String.format(Locale.getDefault(),
-                        "%s=%s&%s=%s&%s=%d",
+                        "%s=%s&%s=%s&%s=%d&%s=%d",
                         PARAM_SPOTIFY_USERNAME, spotifyUsername,
                         PARAM_SPOTIFY_TRACK, spotifyTrackid,
-                        PARAM_SCROLLTIME, scrolltime);
+                        PARAM_SCROLLTIME, scrolltime,
+                        PARAM_LENGTH, length);
 
                 return doRequest("broadcast", query);
             }
@@ -117,7 +124,7 @@ public class Requester {
                 JSONObject res = doRequest("listen", query);
                 // Also put the host into the result
                 res.put("host", hostToListenTo);
-                Log.d("Poo", res.toString());
+                Log.d(TAG, res.toString());
                 return res;
             } catch (JSONException | IOException e) {
                 Log.e(TAG, "Catastrophe!", e);
@@ -148,7 +155,7 @@ public class Requester {
         String url = String.format("%s://%s/%s?%s", PROTOCOL, DOMAIN, path, query);
         Log.d(TAG, "The expanded broadcast request url is " + url);
 
-        String responseStr = Utility.getFromUrl(url);
+        String responseStr = getFromUrl(url);
         try {
             JSONObject responseStrJSON = new JSONObject(responseStr);
             return responseStrJSON;
@@ -175,6 +182,28 @@ public class Requester {
             Log.e(TAG, "Error parsing JSON of streamers", e);
         }
         return null;
+    }
+
+    public static String getFromUrl(String url) throws IOException {
+        Log.d(TAG, "Getting from " + url);
+
+        URLConnection conn = new URL(url).openConnection();
+
+        //conn.setRequestProperty("Accept-Charset", ENCODING);
+        InputStream is = conn.getInputStream();
+        Log.d(TAG, "Finished getting response");
+
+        return readAllFromInputStream(is);
+    }
+
+    static String readAllFromInputStream(InputStream is) throws IOException {
+        StringBuilder responseBuilder = new StringBuilder();
+        int i;
+        while ((i = is.read()) != -1) {
+            responseBuilder.append((char) i);
+        }
+
+        return responseBuilder.toString();
     }
 }
 

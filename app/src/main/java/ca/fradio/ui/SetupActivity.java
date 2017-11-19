@@ -67,7 +67,7 @@ public class SetupActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.d(TAG, "click connect");
                 JSONObject listenInfo = requester.requestListen(Globals.getSpotifyUsername(),
-                        "TheRealGoon");
+                        "tetchel");
                 try {
                     connectToSong(listenInfo);
                 } catch (JSONException e) {
@@ -116,8 +116,14 @@ public class SetupActivity extends AppCompatActivity {
             return;
         }
 
+        String status = listenInfo.getString("status");
+        if(!status.equals("OK")) {
+            Toast.makeText(this, status, Toast.LENGTH_LONG).show();
+        }
+
         long serverTime = listenInfo.getLong("server_time");
         int trackTime = listenInfo.getInt("track_time");
+        int trackLen = listenInfo.getInt("track_length");
         String trackid = listenInfo.getString("spotify_track_id");
         String hostusername = listenInfo.getString("host");
 
@@ -127,6 +133,10 @@ public class SetupActivity extends AppCompatActivity {
         long now = System.currentTimeMillis();
         long elapsed = now - serverTime;
         trackTime += elapsed;
+
+        if(trackTime > trackLen) {
+            Toast.makeText(this, "Current track has ended", Toast.LENGTH_LONG).show();
+        }
 
         Globals.getStreamService().playTrack(hostusername, trackid, trackTime);
         Toast.makeText(this, getString(R.string.now_listening_to) + ' ' + hostusername +

@@ -54,26 +54,26 @@ public class MediaStateReceiver extends BroadcastReceiver {
 
         // The currentTrackId must always be set, or there will be an error.
         String currentTrackId = intent.getStringExtra("id");
+        int trackLengthInSec = intent.getIntExtra("length", 0);
 
         if (action.equals(SpotifyBroadcasts.METADATA_CHANGED)) {
             //String artistName = intent.getStringExtra("artist");
             //String albumName = intent.getStringExtra("album");
             //String trackName = intent.getStringExtra("track");
-            int trackLengthInSec = intent.getIntExtra("length", 0);
             // Start a timer to find out when this song is going to end
 
             //Log.d(TAG, String.format("trackid %s artist %s album %s track %s len %d",
             //        trackId, artistName, albumName, trackName, trackLengthInSec));
 
 
-            broadcast(currentTrackId, age);
+            broadcast(currentTrackId, age, trackLengthInSec);
         } else if (action.equals(SpotifyBroadcasts.PLAYBACK_STATE_CHANGED)) {
             boolean playing = intent.getBooleanExtra("playing", false);
             int positionInMs = intent.getIntExtra("playbackPosition", 0);
             Log.d(TAG, "playing? " + playing + " position changed to " + positionInMs);
 
             if(playing) {
-                broadcast(currentTrackId, positionInMs + age);
+                broadcast(currentTrackId, positionInMs + age, trackLengthInSec);
             }
             else {
                 // TODO Tell the server to pause
@@ -85,17 +85,18 @@ public class MediaStateReceiver extends BroadcastReceiver {
         }
     }
 
-    private void broadcast(String trackid, long positionMs) {
+    private void broadcast(String trackid, long positionMs, long trackLength) {
         Log.d(TAG, "Broadcasting trackid " + trackid + " timestamp " + positionMs);
 
         JSONObject resp = requester
-                .requestBroadcast(Globals.getSpotifyUsername(), trackid, positionMs);
+                .requestBroadcast(Globals.getSpotifyUsername(), trackid, positionMs, trackLength);
 
         if(resp == null) {
             Log.e(TAG, "THE RESPONSE WAS NULL TRYING TO BROADCAST!!!!!!");
         }
         else {
-            Log.d(TAG, "WE GOT A RESPONSE!!!!!\n" + resp);
+            Log.d(TAG, "Informed server of broadcast and got response:\n" + resp);
+
         }
     }
 }
