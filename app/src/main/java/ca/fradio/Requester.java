@@ -3,6 +3,7 @@ package ca.fradio;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -11,6 +12,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
@@ -24,7 +26,7 @@ public class Requester {
             ENCODING = "UTF-8",
 
             PARAM_SPOTIFY_USERNAME = "spotifyusername",
-            PARAM_SPOTIFY_TRACK = "spotifytrack",
+            PARAM_SPOTIFY_TRACK = "spotifytrackid",
             PARAM_SCROLLTIME = "scrolltime";
 
     /**
@@ -50,6 +52,20 @@ public class Requester {
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public ArrayList<String> requestStreamers() {
+        try {
+
+            return parseJSONArray(new StreamersRequester().execute().get().getJSONArray("streamers"));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         return null;
@@ -99,9 +115,27 @@ public class Requester {
 
                 // First add the current's user's username
                 String query = "host" + PARAM_SPOTIFY_USERNAME + '=' + hostToListenTo +
-                            "&listener" + PARAM_SPOTIFY_USERNAME + '=' + spotifyUsername;
+                        "&listener" + PARAM_SPOTIFY_USERNAME + '=' + spotifyUsername;
 
                 JSONObject res = doRequest("listen", query);
+                Log.d("Poo", res.toString());
+                return res;
+            } catch (IOException e) {
+                Log.e(TAG, "Catastrophe!", e);
+                return null;
+            }
+        }
+    }
+
+    private static class StreamersRequester extends AsyncTask<String, Void, JSONObject> {
+        @Override
+        protected JSONObject doInBackground(String... strings) {
+
+            try {
+                // No args (for now)
+                String query = "";
+
+                JSONObject res = doRequest("streamers", query);
                 Log.d("Poo", res.toString());
                 return res;
             } catch (IOException e) {
@@ -123,6 +157,24 @@ public class Requester {
             e.printStackTrace();
         }
 
+        return null;
+    }
+
+    private static ArrayList<String> parseJSONArray(JSONArray jsonArray){
+
+        try {
+            ArrayList<String> list = new ArrayList<String>();
+
+            if (jsonArray != null) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    list.add(jsonArray.getString(i));
+                }
+
+            }
+            return list;
+        } catch (JSONException e) {
+            Log.e(TAG, "Error parsing JSON of streamers", e);
+        }
         return null;
     }
 }
