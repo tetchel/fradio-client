@@ -28,7 +28,8 @@ public class Requester {
             PARAM_SPOTIFY_USERNAME = "spotifyusername",
             PARAM_SPOTIFY_TRACK = "trackid",
             PARAM_SCROLLTIME = "t",
-            PARAM_LENGTH="len";
+            PARAM_LENGTH="len",
+            PARAM_PLAYING="playing";
 
     /**
      * Send a request to start BROADCASTING to the server.
@@ -71,7 +72,7 @@ public class Requester {
             String spotifyTrackid = strings[1];
             long scrolltime = Long.parseLong(strings[2]);
             long length = Long.parseLong(strings[3]);
-            boolean isPlaying = Boolean.parseBoolean(strings[4]);
+            int isPlaying = Integer.parseInt(strings[4]);
 
             if(spotifyUsername == null || spotifyTrackid == null) {
                 Log.e(TAG, "NPE error!");
@@ -85,11 +86,12 @@ public class Requester {
                 spotifyTrackid = URLEncoder.encode(spotifyTrackid, ENCODING);
 
                 String query = String.format(Locale.getDefault(),
-                        "%s=%s&%s=%s&%s=%d&%s=%d",
+                        "%s=%s&%s=%s&%s=%d&%s=%d&%s=%d",
                         PARAM_SPOTIFY_USERNAME, spotifyUsername,
                         PARAM_SPOTIFY_TRACK, spotifyTrackid,
                         PARAM_SCROLLTIME, scrolltime,
-                        PARAM_LENGTH, length);
+                        PARAM_LENGTH, length,
+                        PARAM_PLAYING, isPlaying);
 
                 JSONObject result = doRequest("broadcast", query);
                 String status = result.getString("status");
