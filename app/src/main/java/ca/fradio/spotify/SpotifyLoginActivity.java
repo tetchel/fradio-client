@@ -51,7 +51,6 @@ public class SpotifyLoginActivity extends Activity {
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
     }
 
-    @SuppressLint("StaticFieldLeak")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);

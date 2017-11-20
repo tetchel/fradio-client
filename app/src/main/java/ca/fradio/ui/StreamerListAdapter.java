@@ -26,7 +26,6 @@ public class StreamerListAdapter extends ArrayAdapter<String> {
     private final Activity context;
     private final String username;
     private final ArrayList<String> streamers;
-    private final Requester requester;
 
     public StreamerListAdapter(Activity context, String username, ArrayList<String> streamers) {
         super(context, R.layout.streamer_list_item, streamers);
@@ -40,8 +39,6 @@ public class StreamerListAdapter extends ArrayAdapter<String> {
                 streamers.remove(i);
             }
         }
-
-        requester = new Requester();
     }
 
     @Override

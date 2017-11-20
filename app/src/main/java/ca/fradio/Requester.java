@@ -31,6 +31,8 @@ public class Requester {
             PARAM_LENGTH="len",
             PARAM_PLAYING="playing";
 
+    protected Requester() { };
+
     /**
      * Send a request to start BROADCASTING to the server.
      * @return The server's response, or NULL IF AN EXCEPTION OCCURS.
@@ -42,6 +44,16 @@ public class Requester {
 
         new BroadcastRequester().execute(spotifyUsername, spotifyTrackid,
                 "" + scrolltime, "" + trackLength, "" + isPlaying);
+    }
+
+    public static JSONObject requestBroadcastResult(String spotifyUsername, String spotifyTrackid,
+            long scrolltime, long trackLength, boolean playing)
+            throws ExecutionException, InterruptedException {
+
+        int isPlaying = playing ? 0 : 1;
+
+        return new BroadcastRequester().execute(spotifyUsername, spotifyTrackid,
+                "" + scrolltime, "" + trackLength, "" + isPlaying).get();
     }
 
     public static JSONObject requestListen(String spotifyUsername, String hostToListenTo) {
@@ -69,9 +81,9 @@ public class Requester {
         new DisconnectRequester().execute(spotifyUsername);
     }
 
-    private static class BroadcastRequester extends AsyncTask<String, Void, Void> {
+    private static class BroadcastRequester extends AsyncTask<String, Void, JSONObject> {
         @Override
-        protected Void doInBackground(String... strings) {
+        protected JSONObject doInBackground(String... strings) {
             String spotifyUsername = strings[0];
             String spotifyTrackid = strings[1];
             long scrolltime = Long.parseLong(strings[2]);
@@ -102,9 +114,10 @@ public class Requester {
                 if(!status.equals("OK")) {
                     Log.e(TAG, "Received error after broadcast report: " + status);
                 }
+                return result;
             }
             catch(IOException | JSONException e) {
-                Log.e(TAG, "Catastrophe!", e);
+                Log.e(TAG, "BroadcastReq Catastrophe!", e);
             }
             return null;
         }
@@ -129,7 +142,7 @@ public class Requester {
                 Log.d(TAG, res.toString());
                 return res;
             } catch (JSONException | IOException e) {
-                Log.e(TAG, "Catastrophe!", e);
+                Log.e(TAG, "ListenReq Catastrophe!", e);
                 return null;
             }
         }
@@ -146,8 +159,8 @@ public class Requester {
                 JSONObject res = doRequest("streamers", query);
                 Log.d("Poo", res.toString());
                 return res;
-            } catch (IOException e) {
-                Log.e(TAG, "Catastrophe!", e);
+            } catch (JSONException | IOException e) {
+                Log.e(TAG, "StreamerReq Catastrophe!", e);
                 return null;
             }
         }
@@ -165,26 +178,20 @@ public class Requester {
                 JSONObject res = doRequest("disconnect", query);
                 Log.d(TAG, res.toString());
                 return res;
-            } catch (IOException e) {
-                Log.e(TAG, "Catastrophe!", e);
+            } catch (JSONException | IOException e) {
+                Log.e(TAG, "DisconnectReq Catastrophe!", e);
                 return null;
             }
         }
     }
 
-    private static JSONObject doRequest(String path, String query) throws IOException {
+    private static JSONObject doRequest(String path, String query)
+            throws IOException, JSONException {
         String url = String.format("%s://%s/%s?%s", PROTOCOL, DOMAIN, path, query);
         Log.d(TAG, "The expanded broadcast request url is " + url);
 
         String responseStr = getFromUrl(url);
-        try {
-            JSONObject responseStrJSON = new JSONObject(responseStr);
-            return responseStrJSON;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        return new JSONObject(responseStr);
     }
 
     private static ArrayList<String> parseJSONArray(JSONArray jsonArray){
