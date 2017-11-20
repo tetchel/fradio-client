@@ -50,7 +50,7 @@ public class BroadcastRequesterThread extends Thread {
                 newBroadcastID = "";
 
                 Log.d(TAG, newBroadcastID + " vs. " + currBroadcastID);
-                if (newBroadcastID.equals(currBroadcastID)) {
+                if (!newBroadcastID.equals(currBroadcastID)) {
                         Log.d(TAG, listenResponse.toString());
                         Globals.getStreamService().connectToSong(listenResponse);
                         Log.d(TAG, "STARTING NEW SONG THROUGH BRT");
