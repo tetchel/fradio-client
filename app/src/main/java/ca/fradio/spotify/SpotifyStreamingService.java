@@ -23,6 +23,9 @@ import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import ca.fradio.Globals;
 import ca.fradio.R;
 
@@ -290,5 +293,47 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
 
     public void stop() {
         Log.d(TAG, "stop");
+    }
+
+    public void connectToSong(JSONObject listenInfo) throws JSONException {
+        Log.d(TAG, listenInfo.toString());
+
+        if(Globals.getStreamService() == null) {
+            Toast.makeText(this, "You are not logged in!",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        String status = listenInfo.getString("status");
+        if(status  != null && !status.equals("OK")) {
+            Toast.makeText(this, status, Toast.LENGTH_LONG).show();
+        }
+
+        long serverTime = listenInfo.getLong("server_time");
+        int trackTime = listenInfo.getInt("track_time");
+        int trackLen = listenInfo.getInt("track_length");
+        String trackid = listenInfo.getString("spotify_track_id");
+        String hostusername = listenInfo.getString("host");
+        int isPlaying = listenInfo.getInt("is_playing");
+
+        // Account for the listening time that elapsed in transmission
+        // Should handle the case of this being too long - if longer than track len, set to 0
+
+        long now = System.currentTimeMillis();
+        long elapsed = now - serverTime;
+        trackTime += elapsed;
+
+        if(trackTime > trackLen) {
+            Toast.makeText(this, "Current track has ended", Toast.LENGTH_LONG).show();
+        }
+
+        if (isPlaying==0) {
+            playTrack(hostusername, trackid, trackTime);
+            Toast.makeText(this, this.getString(R.string.now_listening_to) + ' ' + hostusername +
+                    this.getString(R.string.apostrophes_radio), Toast.LENGTH_LONG).show();
+        } else {
+            pause(hostusername);
+            Toast.makeText(this, this.getString(R.string.app_name) + this.getString(R.string.paused), Toast.LENGTH_LONG).show();
+        }
     }
 }

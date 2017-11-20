@@ -60,7 +60,7 @@ public class StreamerListAdapter extends ArrayAdapter<String> {
                     JSONObject listenResponse =  Requester.requestListen(username,
                             streamers.get(position));
                     Globals.setStreamer(streamers.get(position));
-                    connectToSong(listenResponse);
+                    Globals.getStreamService().connectToSong(listenResponse);
                     Toast.makeText(context, context.getString(R.string.now_listening_to) + " "
                             + streamers.get(position), Toast.LENGTH_SHORT).show();
                 } catch (JSONException e){
@@ -70,41 +70,5 @@ public class StreamerListAdapter extends ArrayAdapter<String> {
         });
 
         return rowView;
-    }
-
-    private void connectToSong(JSONObject listenInfo) throws JSONException {
-        Log.d(TAG, listenInfo.toString());
-
-        if(Globals.getStreamService() == null) {
-            Toast.makeText(context, "You are not logged in!",
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        String status = listenInfo.getString("status");
-        if(!status.equals("OK")) {
-            Toast.makeText(context, status, Toast.LENGTH_LONG).show();
-        }
-
-        long serverTime = listenInfo.getLong("server_time");
-        int trackTime = listenInfo.getInt("track_time");
-        int trackLen = listenInfo.getInt("track_length");
-        String trackid = listenInfo.getString("spotify_track_id");
-        String hostusername = listenInfo.getString("host");
-
-        // Account for the listening time that elapsed in transmission
-        // Should handle the case of this being too long - if longer than track len, set to 0
-
-        long now = System.currentTimeMillis();
-        long elapsed = now - serverTime;
-        trackTime += elapsed;
-
-        if(trackTime > trackLen) {
-            Toast.makeText(context, "Current track has ended", Toast.LENGTH_LONG).show();
-        }
-
-        Globals.getStreamService().playTrack(hostusername, trackid, trackTime);
-        Toast.makeText(context, context.getString(R.string.now_listening_to) + ' ' + hostusername +
-                context.getString(R.string.apostrophes_radio), Toast.LENGTH_LONG).show();
     }
 }

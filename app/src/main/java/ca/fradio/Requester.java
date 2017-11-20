@@ -35,10 +35,12 @@ public class Requester {
      * @return The server's response, or NULL IF AN EXCEPTION OCCURS.
      */
     public static void requestBroadcast(String spotifyUsername, String spotifyTrackid,
-                                       long scrolltime, long trackLength, boolean isPlaying) {
+                                       long scrolltime, long trackLength, boolean playing) {
+
+        int playingi = playing == true ? 0 : 1;
 
         new BroadcastRequester().execute(spotifyUsername, spotifyTrackid,
-                "" + scrolltime, "" + trackLength, "" + isPlaying);
+                "" + scrolltime, "" + trackLength, "" + playingi);
     }
 
     public static JSONObject requestListen(String spotifyUsername, String hostToListenTo) {
