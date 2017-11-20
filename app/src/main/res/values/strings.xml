@@ -3,4 +3,5 @@
     <string name="apostrophes_radio">\'s Radio</string>
     <string name="now_listening_to">Now Listening to</string>
     <string name="paused">Paused</string>
+    <string name="login">Log In</string>
 </resources>
