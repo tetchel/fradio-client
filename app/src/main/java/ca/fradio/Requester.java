@@ -38,10 +38,10 @@ public class Requester {
     public static void requestBroadcast(String spotifyUsername, String spotifyTrackid,
                                        long scrolltime, long trackLength, boolean playing) {
 
-        int playingi = playing == true ? 0 : 1;
+        int isPlaying = playing ? 0 : 1;
 
         new BroadcastRequester().execute(spotifyUsername, spotifyTrackid,
-                "" + scrolltime, "" + trackLength, "" + playingi);
+                "" + scrolltime, "" + trackLength, "" + isPlaying);
     }
 
     public static JSONObject requestListen(String spotifyUsername, String hostToListenTo) {

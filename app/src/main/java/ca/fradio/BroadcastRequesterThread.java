@@ -17,13 +17,20 @@ public class BroadcastRequesterThread extends Thread {
     @Override
     public void run(){
         while(true) {
+            String streamer = Globals.getStreamer();
+            if(streamer == null) {
+                return;
+            }
+
             try {
                 sleep(3500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
             String newBroadcastID = "";
-            JSONObject listenResponse = Requester.requestListen(Globals.getSpotifyUsername(), Globals.getStreamer());
+            JSONObject listenResponse = Requester.requestListen(Globals.getSpotifyUsername(),
+                    streamer);
 
             try {
                     newBroadcastID = listenResponse.getString("broadcast_id");

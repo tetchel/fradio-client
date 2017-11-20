@@ -20,6 +20,7 @@ import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Connectivity;
 import com.spotify.sdk.android.player.Error;
+import com.spotify.sdk.android.player.Metadata;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
@@ -239,14 +240,6 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
         new UpdateNotificationTask().execute("", hostusername);
     }
 
-    public void resume(String hostusername) {
-        Log.d(TAG, "Resume");
-        player.playUri(mOperationCallback, player.getMetadata().contextUri, 0, (int)
-                player.getPlaybackState().positionMs);
-
-        new UpdateNotificationTask().execute("", hostusername);
-    }
-
     public void pause(String hostusername) {
         Log.d(TAG, "pause");
         player.pause(mOperationCallback);
@@ -256,6 +249,10 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
     public void seek(int position) {
         Log.d(TAG, "seek");
         player.seekToPosition(mOperationCallback, position);
+    }
+
+    public void stop() {
+        Log.d(TAG, "stop");
     }
 
     private class UpdateNotificationTask extends AsyncTask<String, Void, Void> {
@@ -274,7 +271,8 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
                 try {
                     Thread.sleep(500);
                     elapsed += 500;
-                    if (player.getMetadata().currentTrack.name != null) {
+                    Metadata.Track track = player.getMetadata().currentTrack;
+                    if (track.name != null) {
                         String name = player.getMetadata().currentTrack.name;
                         Log.d(TAG, "Updating notification for song: " + name);
                         StatusNotificationManager.instance().setMsg(
@@ -291,10 +289,6 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
 
             return null;
         }
-    }
-
-    public void stop() {
-        Log.d(TAG, "stop");
     }
 
     public void connectToSong(JSONObject listenInfo) throws JSONException {
