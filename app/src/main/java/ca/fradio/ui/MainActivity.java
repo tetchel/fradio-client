@@ -61,7 +61,8 @@ public class MainActivity extends AppCompatActivity {
     private void toggleIsBroadcasting() {
         final Button broadcastBtn = findViewById(R.id.btn_broadcast);
         if(_isBroadcasting) {
-            Log.d(TAG, "Starting broadcasting");
+            Log.d(TAG, "Stopped broadcasting");
+            Requester.requestDisconnect(Globals.getSpotifyUsername());
 
             unregisterReceiver(_msr);
 
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
             broadcastRequesterThread.setIsEnabled(true);
         }
         else {
-            Log.d(TAG, "Stopping broadcasting");
+            Log.d(TAG, "Started broadcasting");
             registerReceiver(_msr, _msr.getFilter());
 
             _isBroadcasting = true;

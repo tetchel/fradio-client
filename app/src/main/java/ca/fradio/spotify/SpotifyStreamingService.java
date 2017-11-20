@@ -1,5 +1,7 @@
 package ca.fradio.spotify;
 
+import ca.fradio.Requester;
+
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -106,6 +108,7 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
         }
 
         Spotify.destroyPlayer(this);
+        Requester.requestDisconnect(Globals.getSpotifyUsername());
     }
 
     public void onAuthenticationComplete(String token)
@@ -193,6 +196,7 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
     @Override
     public void onLoggedOut() {
         Log.i(TAG, "Logged out");
+        Requester.requestDisconnect(Globals.getSpotifyUsername());
     }
 
     @Override

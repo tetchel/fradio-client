@@ -65,6 +65,10 @@ public class Requester {
         return null;
     }
 
+    public static void requestDisconnect(String spotifyUsername){
+        new DisconnectRequester().execute(spotifyUsername);
+    }
+
     private static class BroadcastRequester extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... strings) {
@@ -141,6 +145,25 @@ public class Requester {
 
                 JSONObject res = doRequest("streamers", query);
                 Log.d("Poo", res.toString());
+                return res;
+            } catch (IOException e) {
+                Log.e(TAG, "Catastrophe!", e);
+                return null;
+            }
+        }
+    }
+
+    private static class DisconnectRequester extends AsyncTask<String, Void, JSONObject> {
+        @Override
+        protected JSONObject doInBackground(String... strings) {
+
+            String spotifyUsername = strings[0];
+            try {
+                spotifyUsername = URLEncoder.encode(spotifyUsername, ENCODING);
+                String query = PARAM_SPOTIFY_USERNAME + '=' + spotifyUsername;
+
+                JSONObject res = doRequest("disconnect", query);
+                Log.d(TAG, res.toString());
                 return res;
             } catch (IOException e) {
                 Log.e(TAG, "Catastrophe!", e);
