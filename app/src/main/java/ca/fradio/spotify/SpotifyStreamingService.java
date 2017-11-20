@@ -272,8 +272,8 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
                     Thread.sleep(500);
                     elapsed += 500;
                     Metadata.Track track = player.getMetadata().currentTrack;
-                    if (track.name != null) {
-                        String name = player.getMetadata().currentTrack.name;
+                    if (track != null) {
+                        String name = track.name;
                         Log.d(TAG, "Updating notification for song: " + name);
                         StatusNotificationManager.instance().setMsg(
                                 host + getString(R.string.apostrophes_radio),

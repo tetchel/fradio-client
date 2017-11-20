@@ -108,7 +108,7 @@ public class SpotifyLoginActivity extends Activity {
                 default:
                     Log.d(TAG, "Auth result: " + response.getType());
                     Toast.makeText(getApplicationContext(),
-                            "Login failure - You'll have to try again.",
+                            "Login failure - Please try again.",
                             Toast.LENGTH_LONG).show();
             }
         }

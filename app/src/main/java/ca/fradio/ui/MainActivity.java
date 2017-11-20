@@ -2,12 +2,14 @@ package ca.fradio.ui;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 import ca.fradio.BroadcastRequesterThread;
 import ca.fradio.Globals;
@@ -26,25 +28,25 @@ public class MainActivity extends AppCompatActivity {
 
     private StreamerListAdapter _listAdapter;
 
-    private BroadcastRequesterThread broadcastRequesterThread;
+    private final BroadcastRequesterThread broadcastRequesterThread =
+            new BroadcastRequesterThread();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Requester requester = new Requester();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         /* Populate list view with streamers */
         final ListView listView = findViewById(R.id.list_streamers);
-        ArrayList<String> streamers = requester.requestStreamers();
+        ArrayList<String> streamers = Requester.requestStreamers();
         String username = Globals.getSpotifyUsername();
 
         _listAdapter = new StreamerListAdapter(this, username, streamers);
 
         listView.setAdapter(_listAdapter);
 
-        broadcastRequesterThread = new BroadcastRequesterThread();
         broadcastRequesterThread.start();
+        Log.d(TAG, "Started broadcast requester");
 
         final Button broadcastBtn = findViewById(R.id.btn_broadcast);
         broadcastBtn.setOnClickListener(new View.OnClickListener() {
@@ -59,25 +61,31 @@ public class MainActivity extends AppCompatActivity {
     private void toggleIsBroadcasting() {
         final Button broadcastBtn = findViewById(R.id.btn_broadcast);
         if(_isBroadcasting) {
+            Log.d(TAG, "Starting broadcasting");
+
             unregisterReceiver(_msr);
+
             _isBroadcasting = false;
+
             Toast.makeText(MainActivity.this, "Stopped broadcasting",
                     Toast.LENGTH_SHORT).show();
+
             broadcastBtn.setText("Start Streaming");
-            broadcastRequesterThread.notify();
+
+            broadcastRequesterThread.setIsEnabled(true);
         }
         else {
+            Log.d(TAG, "Stopping broadcasting");
             registerReceiver(_msr, _msr.getFilter());
+
             _isBroadcasting = true;
+
             Toast.makeText(MainActivity.this, "Started broadcasting",
                     Toast.LENGTH_SHORT).show();
+
             broadcastBtn.setText("Stop Streaming");
 
-            try {
-                broadcastRequesterThread.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            broadcastRequesterThread.setIsEnabled(false);
         }
 
         // If you are broadcasting, do not allow connecting to streams
