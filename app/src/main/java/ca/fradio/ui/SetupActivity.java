@@ -62,8 +62,6 @@ public class SetupActivity extends AppCompatActivity {
                 Intent intent = new Intent(SetupActivity.this,
                         SpotifyLoginActivity.class);
                 startActivityForResult(intent, LOGIN_ACTIVITY_REQUEST_CODE);
-
-                new BroadcastRequesterThread().start();
             }
         });
 

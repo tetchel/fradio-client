@@ -2,10 +2,13 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Fradio.iml" filepath="$PROJECT_DIR$/Fradio.iml" />
+      <module fileurl="file://E:\Tim\Programs\fradio\Fradio.iml" filepath="E:\Tim\Programs\fradio\Fradio.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/fradio-client.iml" filepath="$PROJECT_DIR$/fradio-client.iml" />
+      <module fileurl="file://E:\Tim\Programs\fradio\app\app.iml" filepath="E:\Tim\Programs\fradio\app\app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/fradio.iml" filepath="$PROJECT_DIR$/fradio.iml" />
+      <module fileurl="file://E:\Tim\Programs\fradio\fradio-client.iml" filepath="E:\Tim\Programs\fradio\fradio-client.iml" />
       <module fileurl="file://$PROJECT_DIR$/spotify-player-24-noconnect-2.20b/spotify-player-24-noconnect-2.20b.iml" filepath="$PROJECT_DIR$/spotify-player-24-noconnect-2.20b/spotify-player-24-noconnect-2.20b.iml" />
+      <module fileurl="file://E:\Tim\Programs\fradio\spotify-player-24-noconnect-2.20b\spotify-player-24-noconnect-2.20b.iml" filepath="E:\Tim\Programs\fradio\spotify-player-24-noconnect-2.20b\spotify-player-24-noconnect-2.20b.iml" />
     </modules>
   </component>
 </project>

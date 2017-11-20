@@ -72,6 +72,4 @@ public class StreamerListAdapter extends ArrayAdapter<String> {
 
         return rowView;
     }
-
-
 }

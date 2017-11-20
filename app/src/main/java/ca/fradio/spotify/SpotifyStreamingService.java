@@ -9,7 +9,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
@@ -296,6 +298,13 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
     }
 
     public void connectToSong(JSONObject listenInfo) throws JSONException {
+        if(listenInfo == null) {
+            Log.e(TAG, "There was an error getting listeninfo - it was null");
+            Toast.makeText(this, "Error getting listening info", Toast.LENGTH_LONG)
+                    .show();
+            return;
+        }
+
         Log.d(TAG, listenInfo.toString());
 
         if(Globals.getStreamService() == null) {
@@ -323,17 +332,29 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
         long elapsed = now - serverTime;
         trackTime += elapsed;
 
+        Handler handler = new Handler(Looper.getMainLooper());
+
         if(trackTime > trackLen) {
-            Toast.makeText(this, "Current track has ended", Toast.LENGTH_LONG).show();
+            toast(handler, "Current track has ended", Toast.LENGTH_SHORT);
         }
 
         if (isPlaying==0) {
             playTrack(hostusername, trackid, trackTime);
-            Toast.makeText(this, this.getString(R.string.now_listening_to) + ' ' + hostusername +
-                    this.getString(R.string.apostrophes_radio), Toast.LENGTH_LONG).show();
+            toast(handler, getString(R.string.now_listening_to) + ' ' + hostusername +
+                            getString(R.string.apostrophes_radio), Toast.LENGTH_SHORT);
         } else {
             pause(hostusername);
-            Toast.makeText(this, this.getString(R.string.app_name) + this.getString(R.string.paused), Toast.LENGTH_LONG).show();
+            toast(handler, getString(R.string.app_name) + getString(R.string.paused),
+                    Toast.LENGTH_SHORT);
         }
+    }
+
+    private void toast(final Handler handler, final String msg, final int len) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(SpotifyStreamingService.this, msg, len).show();
+            }
+        });
     }
 }

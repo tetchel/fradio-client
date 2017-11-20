@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import ca.fradio.BroadcastRequesterThread;
 import ca.fradio.Globals;
 import ca.fradio.R;
 import ca.fradio.Requester;
@@ -25,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
 
     private StreamerListAdapter _listAdapter;
 
+    private BroadcastRequesterThread broadcastRequesterThread;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Requester requester = new Requester();
@@ -39,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
         _listAdapter = new StreamerListAdapter(this, username, streamers);
 
         listView.setAdapter(_listAdapter);
+
+        broadcastRequesterThread = new BroadcastRequesterThread();
+        broadcastRequesterThread.start();
 
         final Button broadcastBtn = findViewById(R.id.btn_broadcast);
         broadcastBtn.setOnClickListener(new View.OnClickListener() {
@@ -58,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "Stopped broadcasting",
                     Toast.LENGTH_SHORT).show();
             broadcastBtn.setText("Start Streaming");
+            broadcastRequesterThread.notify();
         }
         else {
             registerReceiver(_msr, _msr.getFilter());
@@ -65,6 +72,12 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "Started broadcasting",
                     Toast.LENGTH_SHORT).show();
             broadcastBtn.setText("Stop Streaming");
+
+            try {
+                broadcastRequesterThread.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         // If you are broadcasting, do not allow connecting to streams
@@ -72,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
         for(View view : ((View)findViewById(R.id.list_streamers)).getTouchables()) {
             view.setEnabled(!_isBroadcasting);
         }
-
     }
 
     @Override

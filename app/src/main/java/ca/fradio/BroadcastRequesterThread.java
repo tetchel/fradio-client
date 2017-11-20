@@ -12,8 +12,9 @@ import org.json.JSONObject;
  */
 public class BroadcastRequesterThread extends Thread {
 
-    String currBroadcastID;
+    private String currBroadcastID;
 
+    @Override
     public void run(){
         while(true) {
             try {
@@ -21,9 +22,6 @@ public class BroadcastRequesterThread extends Thread {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
-            currBroadcastID = Globals.getBroadcastID();
-
             String newBroadcastID = "";
             JSONObject listenResponse = Requester.requestListen(Globals.getSpotifyUsername(), Globals.getStreamer());
 
@@ -32,7 +30,8 @@ public class BroadcastRequesterThread extends Thread {
                     newBroadcastID = "";
 
                 Log.d("BroadcastRequester", newBroadcastID + " vs. " + currBroadcastID);
-                if (newBroadcastID.equals(currBroadcastID) && listenResponse.getString("status").equals("OK")){
+                if (newBroadcastID.equals(currBroadcastID) &&
+                        listenResponse.getString("status").equals("OK")){
                         Log.d("brt", listenResponse.toString());
                         Globals.getStreamService().connectToSong(listenResponse);
                         Log.d("BroadcastRequesterThrea", "STARTING NEW SONG THROUGH BRT");
@@ -42,7 +41,7 @@ public class BroadcastRequesterThread extends Thread {
                 e.printStackTrace();
             }
 
-            Globals.setBroadcastID(newBroadcastID);
+            currBroadcastID = newBroadcastID;
 
         }
 

@@ -38,8 +38,4 @@ public class Globals {
         Globals.streamer = streamer;
     }
 
-    private static String broadcastID;
-    public static void setBroadcastID(String tid){broadcastID = tid;}
-    public static String getBroadcastID(){return broadcastID;}
-
 }
