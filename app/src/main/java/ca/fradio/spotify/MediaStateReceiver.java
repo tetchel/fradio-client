@@ -53,7 +53,7 @@ public class MediaStateReceiver extends BroadcastReceiver {
         // The currentTrackId must always be set, or there will be an error.
         String currentTrackId = intent.getStringExtra("id");
         int trackLengthInSec = intent.getIntExtra("length", 0);
-        boolean playing = intent.getBooleanExtra("playing", false);
+        boolean playing = intent.getBooleanExtra("playing", true);
 
         if (action.equals(SpotifyBroadcasts.METADATA_CHANGED)) {
             //String artistName = intent.getStringExtra("artist");

@@ -77,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             Log.d(TAG, "Started broadcasting");
+            Requester.requestStopListen(Globals.getSpotifyUsername());
+
             registerReceiver(_msr, _msr.getFilter());
 
             _isBroadcasting = true;

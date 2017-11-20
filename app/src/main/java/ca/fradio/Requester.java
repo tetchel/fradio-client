@@ -69,6 +69,10 @@ public class Requester {
         new DisconnectRequester().execute(spotifyUsername);
     }
 
+    public static void requestStopListen(String spotifyUsername){
+        new StopListenRequester().execute(spotifyUsername);
+    }
+
     private static class BroadcastRequester extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... strings) {
@@ -172,6 +176,24 @@ public class Requester {
         }
     }
 
+    private static class StopListenRequester extends AsyncTask<String, Void, JSONObject> {
+        @Override
+        protected JSONObject doInBackground(String... strings) {
+
+            String spotifyUsername = strings[0];
+            try {
+                spotifyUsername = URLEncoder.encode(spotifyUsername, ENCODING);
+                String query = PARAM_SPOTIFY_USERNAME + '=' + spotifyUsername;
+
+                JSONObject res = doRequest("stop_listen", query);
+                Log.d(TAG, res.toString());
+                return res;
+            } catch (IOException e) {
+                Log.e(TAG, "Catastrophe!", e);
+                return null;
+            }
+        }
+    }
     private static JSONObject doRequest(String path, String query) throws IOException {
         String url = String.format("%s://%s/%s?%s", PROTOCOL, DOMAIN, path, query);
         Log.d(TAG, "The expanded broadcast request url is " + url);
