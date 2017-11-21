@@ -73,8 +73,8 @@ public class Requester {
 
     public static ArrayList<UserInfo> requestStreamers() {
         try {
-            return getUserInfo(new StreamersRequester().execute().get()
-                    .getJSONArray("streamers"));
+            JSONObject jso = new StreamersRequester().execute().get();
+            return getUserInfo(jso);
         } catch (InterruptedException | ExecutionException | JSONException e) {
             e.printStackTrace();
         }
@@ -225,8 +225,14 @@ public class Requester {
         return new JSONObject(responseStr);
     }
 
-    private static ArrayList<UserInfo> getUserInfo(JSONArray userInfoJsa){
-        ArrayList<UserInfo> result = new ArrayList<>(userInfoJsa.length());
+    private static ArrayList<UserInfo> getUserInfo(JSONObject jso) throws JSONException {
+        ArrayList<UserInfo> result = new ArrayList<>();
+        if(jso == null) {
+            Log.e(TAG, "Null JsonObject passed to getUserInfo)");
+            return result;
+        }
+        JSONArray userInfoJsa = jso.getJSONArray("streamers");
+
         try {
             for(int i = 0; i < userInfoJsa.length(); i++) {
                 JSONObject user = userInfoJsa.getJSONObject(i);

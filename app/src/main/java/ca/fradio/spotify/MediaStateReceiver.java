@@ -105,7 +105,7 @@ public class MediaStateReceiver extends BroadcastReceiver {
         return currentTrackName;
     }
 
-    public String getCurrentArtist() {
+    public String getMostRecentArtist() {
         return currentArtist;
     }
 }

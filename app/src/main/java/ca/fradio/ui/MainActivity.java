@@ -1,18 +1,13 @@
 package ca.fradio.ui;
 
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import com.spotify.sdk.android.player.Metadata;
 
 import java.util.ArrayList;
 
@@ -111,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "Started broadcasting");
 
             String trackName = _msr.getMostRecentTrack();
-            String artist = _msr.getCurrentArtist();
+            String artist = _msr.getMostRecentArtist();
             if(trackName == null) {
                 Toast.makeText(this, "You are not playing any music!",
                         Toast.LENGTH_SHORT).show();
