@@ -76,6 +76,10 @@ public class BroadcastRequesterThread extends Thread {
         this.isEnabled = enabled;
     }
 
+    /**
+     * Can be used to determine if the user is currently connected to a stream, since
+     * the BRT state will match that.
+     */
     public boolean isEnabled() {
         return isEnabled;
     }
