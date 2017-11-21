@@ -1,9 +1,11 @@
-package ca.fradio;
+package ca.fradio.net;
 
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import ca.fradio.Globals;
 
 public class BroadcastRequesterThread extends Thread {
 
@@ -73,6 +75,10 @@ public class BroadcastRequesterThread extends Thread {
 
     public void setIsEnabled(boolean enabled) {
         this.isEnabled = enabled;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
     }
 
     public void setStreamer(String streamer) { this.streamer = streamer; }

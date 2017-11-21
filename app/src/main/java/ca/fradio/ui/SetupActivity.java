@@ -16,7 +16,6 @@ import ca.fradio.R;
 import ca.fradio.spotify.MediaStateReceiver;
 import ca.fradio.spotify.SpotifyLoginActivity;
 import ca.fradio.spotify.SpotifyStreamingService;
-import ca.fradio.BroadcastRequesterThread;
 
 public class SetupActivity extends AppCompatActivity {
 

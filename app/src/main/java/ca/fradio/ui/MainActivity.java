@@ -9,12 +9,12 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.concurrent.Semaphore;
 
-import ca.fradio.BroadcastRequesterThread;
+import ca.fradio.UserInfo;
+import ca.fradio.net.BroadcastRequesterThread;
 import ca.fradio.Globals;
 import ca.fradio.R;
-import ca.fradio.Requester;
+import ca.fradio.net.Requester;
 import ca.fradio.spotify.MediaStateReceiver;
 
 public class MainActivity extends AppCompatActivity {
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         /* Populate list view with streamers */
         final ListView listView = findViewById(R.id.list_streamers);
-        ArrayList<String> streamers = Requester.requestStreamers();
+        ArrayList<UserInfo> streamers = Requester.requestStreamers();
 
         _listAdapter = new StreamerListAdapter(this, streamers);
 

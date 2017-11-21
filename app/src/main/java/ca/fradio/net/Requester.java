@@ -1,4 +1,4 @@
-package ca.fradio;
+package ca.fradio.net;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
+import ca.fradio.UserInfo;
+
 public class Requester {
 
     private static final String TAG = "Fradio-Requester";
@@ -28,48 +30,50 @@ public class Requester {
             PARAM_SPOTIFY_USERNAME = "spotifyusername",
             PARAM_SPOTIFY_TRACK = "trackid",
             PARAM_SCROLLTIME = "t",
-            PARAM_LENGTH="len",
-            PARAM_PLAYING="playing";
+            PARAM_LENGTH = "len",
+            PARAM_PLAYING = "playing";
 
-    protected Requester() { };
+    // Static methods only
+    protected Requester() { }
 
     /**
-     * Send a request to start BROADCASTING to the server.
-     * @return The server's response, or NULL IF AN EXCEPTION OCCURS.
+     * Send a request to start BROADCASTING to the server. Does not wait for server's response.
      */
     public static void requestBroadcast(String spotifyUsername, String spotifyTrackid,
                                        long scrolltime, long trackLength, boolean playing) {
 
-        int isPlaying = playing ? 0 : 1;
-
         new BroadcastRequester().execute(spotifyUsername, spotifyTrackid,
-                "" + scrolltime, "" + trackLength, "" + isPlaying);
+                "" + scrolltime, "" + trackLength, "" + isPlayingToInt(playing));
     }
 
+    /**
+     * For use by tests only - Waits for response before returning it.
+     * @return
+     */
     public static JSONObject requestBroadcastResult(String spotifyUsername, String spotifyTrackid,
             long scrolltime, long trackLength, boolean playing)
             throws ExecutionException, InterruptedException {
 
-        int isPlaying = playing ? 0 : 1;
-
         return new BroadcastRequester().execute(spotifyUsername, spotifyTrackid,
-                "" + scrolltime, "" + trackLength, "" + isPlaying).get();
+                "" + scrolltime, "" + trackLength, "" + isPlayingToInt(playing)).get();
+    }
+
+    private static int isPlayingToInt(boolean isPlaying) {
+        return isPlaying ? 1 : 0;
     }
 
     public static JSONObject requestListen(String spotifyUsername, String hostToListenTo) {
         try {
             return new ListenRequester().execute(spotifyUsername, hostToListenTo).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public static ArrayList<String> requestStreamers() {
+    public static ArrayList<UserInfo> requestStreamers() {
         try {
-            return parseJSONArray(new StreamersRequester().execute().get()
+            return getUserInfo(new StreamersRequester().execute().get()
                     .getJSONArray("streamers"));
         } catch (InterruptedException | ExecutionException | JSONException e) {
             e.printStackTrace();
@@ -95,10 +99,10 @@ public class Requester {
             long length = Long.parseLong(strings[3]);
             int isPlaying = Integer.parseInt(strings[4]);
 
-            if(spotifyUsername == null || spotifyTrackid == null) {
-                Log.e(TAG, "NPE error!");
-                Log.e(TAG, "spotifyUsername==" + spotifyUsername + " spotifyTrackid=="
-                        + spotifyTrackid);
+            if(spotifyUsername == null || spotifyTrackid == null || length == 0) {
+                Log.e(TAG, "Invalid broadcast error!");
+                Log.e(TAG, "spotifyUsername=" + spotifyUsername + " spotifyTrackid="
+                        + spotifyTrackid + " length=" + length);
                 return null;
             }
 
@@ -216,27 +220,27 @@ public class Requester {
             throws IOException, JSONException {
 
         String url = String.format("%s://%s/%s?%s", PROTOCOL, DOMAIN, path, query);
-        Log.d(TAG, "The expanded broadcast request url is " + url);
 
         String responseStr = getFromUrl(url);
         return new JSONObject(responseStr);
     }
 
-    private static ArrayList<String> parseJSONArray(JSONArray jsonArray){
+    private static ArrayList<UserInfo> getUserInfo(JSONArray userInfoJsa){
+        ArrayList<UserInfo> result = new ArrayList<>(userInfoJsa.length());
         try {
-            ArrayList<String> list = new ArrayList<String>();
+            for(int i = 0; i < userInfoJsa.length(); i++) {
+                JSONObject user = userInfoJsa.getJSONObject(i);
+                String username = user.getString("name");
+                int streamStatus = user.getInt("status");
+                boolean isOnline = streamStatus == 1;
+                Log.d(TAG, "A streamer : " + username + " is online ? " + streamStatus);
 
-            if (jsonArray != null) {
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    list.add(jsonArray.getString(i));
-                }
-
+                result.add(new UserInfo(username, isOnline));
             }
-            return list;
         } catch (JSONException e) {
             Log.e(TAG, "Error parsing JSON of streamers", e);
         }
-        return null;
+        return result;
     }
 
     public static String getFromUrl(String url) throws IOException {
@@ -248,7 +252,9 @@ public class Requester {
         InputStream is = conn.getInputStream();
         Log.d(TAG, "Finished getting response");
 
-        return readAllFromInputStream(is);
+        String resp = readAllFromInputStream(is);
+        Log.d(TAG, resp);
+        return resp;
     }
 
     public static String readAllFromInputStream(InputStream is) throws IOException {

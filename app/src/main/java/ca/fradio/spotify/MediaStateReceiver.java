@@ -7,7 +7,7 @@ import android.content.IntentFilter;
 import android.util.Log;
 
 import ca.fradio.Globals;
-import ca.fradio.Requester;
+import ca.fradio.net.Requester;
 
 // Receiver for media events. Reacts to song change, play/pause, seek, etc.
 public class MediaStateReceiver extends BroadcastReceiver {
@@ -53,7 +53,7 @@ public class MediaStateReceiver extends BroadcastReceiver {
         // The currentTrackId must always be set, or there will be an error.
         String currentTrackId = intent.getStringExtra("id");
         int trackLengthInSec = intent.getIntExtra("length", 0);
-        boolean playing = intent.getBooleanExtra("playing", true);
+        boolean playing = intent.getBooleanExtra("playing", false);
 
         if (action.equals(SpotifyBroadcasts.METADATA_CHANGED)) {
             //String artistName = intent.getStringExtra("artist");
@@ -63,12 +63,12 @@ public class MediaStateReceiver extends BroadcastReceiver {
 
             //Log.d(TAG, String.format("trackid %s artist %s album %s track %s len %d",
             //        trackId, artistName, albumName, trackName, trackLengthInSec));
-
+            Log.d(TAG, "Metadata Changed");
 
             broadcast(currentTrackId, age, trackLengthInSec, playing);
         } else if (action.equals(SpotifyBroadcasts.PLAYBACK_STATE_CHANGED)) {
             int positionInMs = intent.getIntExtra("playbackPosition", 0);
-            Log.d(TAG, "playing? " + playing + " position changed to " + positionInMs);
+            Log.d(TAG, "Playback State Changed");
 
             broadcast(currentTrackId, positionInMs + age, trackLengthInSec, playing);
 
@@ -80,7 +80,8 @@ public class MediaStateReceiver extends BroadcastReceiver {
     }
 
     private void broadcast(String trackid, long positionMs, long trackLength, boolean playing) {
-        Log.d(TAG, "Broadcasting trackid " + trackid + " timestamp " + positionMs);
+        Log.d(TAG, "Broadcasting trackid " + trackid + " timestamp " + positionMs
+                + " length " + trackLength + " playing " + playing);
 
         Requester.requestBroadcast(Globals.getSpotifyUsername(), trackid, positionMs, trackLength, playing);
     }
