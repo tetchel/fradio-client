@@ -6,4 +6,6 @@
     <string name="login">Log In</string>
     <string name="start_streaming">Start Streaming</string>
     <string name="stop_streaming">Stop Streaming</string>
+    <string name="share_your_music">Share your Music</string>
+    <string name="join_stream">Join Stream</string>
 </resources>

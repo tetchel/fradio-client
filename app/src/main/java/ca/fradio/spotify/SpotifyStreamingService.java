@@ -1,5 +1,6 @@
 package ca.fradio.spotify;
 
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -38,7 +39,7 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
 
     private static final String TAG = "SpotifyStreamingService";
 
-    private StreamServiceBinder streamBinder = new StreamServiceBinder();
+    private StreamServiceBinder serviceBinder = new StreamServiceBinder();
 
     private Player player;
 
@@ -54,9 +55,7 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
 
         setUpNetworkStateReceiver();
 
-        StatusNotificationManager.instance().setContext(this);
-
-        return streamBinder;
+        return serviceBinder;
     }
 
     @Override
@@ -95,6 +94,8 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
         super.onDestroy();
         Log.d(TAG, "OnDestroy");
 
+        StatusNotificationManager.cancel(this);
+
         unregisterReceiver(networkStateReceiver);
         // Note that calling Spotify.destroyPlayer() will also remove any callbacks on whatever
         // instance was passed as the refcounted owner. So in the case of this particular example,
@@ -110,9 +111,7 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
         Requester.requestDisconnect(Globals.getSpotifyUsername());
     }
 
-    public void onAuthenticationComplete(String token)
-        {
-
+    public void onAuthenticationComplete(String token) {
         // Once we have obtained an authorization token, we can proceed with creating a Player.
         Log.d(TAG, "Got authentication token");
         if (player == null) {
@@ -278,7 +277,8 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
                     if (track != null) {
                         String name = track.name;
                         Log.d(TAG, "Updating notification for song: " + name);
-                        StatusNotificationManager.instance().setMsg(
+                        StatusNotificationManager.notify(
+                                SpotifyStreamingService.this,
                                 host + getString(R.string.apostrophes_radio),
                                 name + " " + msg);
                         break;
