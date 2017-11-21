@@ -52,20 +52,31 @@ public class StreamerListAdapter extends ArrayAdapter<UserInfo> {
         View rowView = inflater.inflate(R.layout.streamer_list_item, null, true);
 
         TextView usernameTxt = rowView.findViewById(R.id.txt_username);
-        ImageButton joinStreamButton = rowView.findViewById(R.id.btn_submit);
+        final ImageButton joinStreamButton = rowView.findViewById(R.id.btn_submit);
 
         // Disallow connecting to stream if you are streaming, or if current user in list is not
-        if(!streamers.get(position).isStreaming() ||
-                !BroadcastRequesterThread.instance().isEnabled()) {
-
+        if(!streamers.get(position).isStreaming()) {
             joinStreamButton.setVisibility(View.INVISIBLE);
         }
 
         usernameTxt.setText(streamers.get(position).getUsername());
         joinStreamButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                activity.connectToStream(Globals.getSpotifyUsername(),
-                        streamers.get(position).getUsername());
+                if(streamers.get(position).getUsername().equals(
+                        BroadcastRequesterThread.instance().getStreamer())) {
+                    // Currently listening to this guy - Stop listening
+                    activity.disconnectFromStream();
+
+                    joinStreamButton.setImageResource(R.drawable.broadcast_64);
+                }
+                else {
+                    activity.connectToStream(Globals.getSpotifyUsername(),
+                            streamers.get(position).getUsername());
+
+                    // Update this streamers's icon to be a Stop icon
+
+                    joinStreamButton.setImageResource(R.mipmap.ic_stop);
+                }
             }
         });
 

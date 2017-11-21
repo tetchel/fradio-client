@@ -26,15 +26,15 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "Fradio-Main";
 
-    private final MediaStateReceiver _msr = new MediaStateReceiver();
+    private MediaStateReceiver _msr;
     //private Adapter adapter;
 
-    private SwipeRefreshLayout swipeToRefresh;
+    private SwipeRefreshLayout _swipeToRefresh;
 
     private boolean _isBroadcasting = false;
 
     private final BroadcastRequesterThread _broadcastRequesterThread =
-            new BroadcastRequesterThread();
+            BroadcastRequesterThread.instance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +42,11 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "Starting MainActivity");
         setContentView(R.layout.activity_main);
 
+        _msr = new MediaStateReceiver(this);
+
         // Configure the refreshable list
-        swipeToRefresh = findViewById(R.id.refreshableList);
-        swipeToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        _swipeToRefresh = findViewById(R.id.refreshableList);
+        _swipeToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 refreshUsersList();
@@ -57,9 +59,13 @@ public class MainActivity extends AppCompatActivity {
         refreshUsersList();
 
         Log.d(TAG, "Starting broadcast requester");
-        _broadcastRequesterThread.start();
+        if(!_broadcastRequesterThread.isAlive()) {
+            _broadcastRequesterThread.start();
+        }
         // Disabled until connect to a stream
         _broadcastRequesterThread.setIsEnabled(false);
+
+        registerReceiver(_msr, _msr.getFilter());
 
         final Button broadcastBtn = findViewById(R.id.btn_broadcast);
         broadcastBtn.setOnClickListener(new View.OnClickListener() {
@@ -77,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
     /** Populate list view with streamers */
     private void refreshUsersList() {
-        swipeToRefresh.setRefreshing(true);
+        _swipeToRefresh.setRefreshing(true);
 
         Log.d(TAG, "Refreshing list of users");
         final ListView listView = findViewById(R.id.list_streamers);
@@ -86,18 +92,11 @@ public class MainActivity extends AppCompatActivity {
         StreamerListAdapter _listAdapter = new StreamerListAdapter(this, streamers);
         listView.setAdapter(_listAdapter);
 
-        swipeToRefresh.setRefreshing(false);
+        _swipeToRefresh.setRefreshing(false);
     }
 
     private void toggleIsBroadcasting() {
-        /*
-        if(_broadcastRequesterThread.isEnabled()) {
-            // The user is currently connected to a stream
-            Toast.makeText(this,
-                    "Cannot stream while listening to someone else's music",
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }*/
+
 
         final Button broadcastBtn = findViewById(R.id.btn_broadcast);
         if(_isBroadcasting) {
@@ -113,30 +112,62 @@ public class MainActivity extends AppCompatActivity {
             broadcastBtn.setText(getString(R.string.share_your_music));
 
             StatusNotificationManager.cancel(this);
+            //Globals.getStreamService().updateNotification(_broadcastRequesterThread.getStreamer());
 
             _broadcastRequesterThread.setIsEnabled(true);
         }
         else {
             Log.d(TAG, "Started broadcasting");
+            String trackName, artist, album;
 
-            String trackName = _msr.getMostRecentTrack();
-            String artist = _msr.getMostRecentArtist();
-            if(trackName == null) {
-                Toast.makeText(this, "You are not playing any music!",
+            if(_broadcastRequesterThread.isEnabled()) {
+                Log.d(TAG, "Propagating " + _broadcastRequesterThread.getStreamer() +
+                        "'s stream");
+                // The user is currently connected to a stream
+                // Propagate that stream
+                Toast.makeText(this, "You can't stream when already streaming " +
+                                "from someone else... yet",
                         Toast.LENGTH_SHORT).show();
-                // Don't bother with the rest of the broadcasting
                 return;
+
+                /*
+                String nowSharingMsg = getString(R.string.sharing) + ' ' +
+
+                                _broadcastRequesterThread.getStreamer() +
+                                getString(R.string.apostrophes_radio);
+                Toast.makeText(this, nowSharingMsg, Toast.LENGTH_SHORT).show();
+
+                Metadata.Track track = Globals.getStreamService().getCurrentTrack();
+                trackName = track.name;
+                artist = track.artistName;
+                album = track.albumName;
+
+                StatusNotificationManager.notify(this, nowSharingMsg,
+                        trackName + " - " + artist);
+                */
+            }
+            else {
+                // Streaming own music
+                trackName = _msr.getCurrentTrackName();
+
+                if (trackName == null) {
+                    Log.d(TAG, "No music playing");
+                    Toast.makeText(this, "You are not playing any music!",
+                            Toast.LENGTH_SHORT).show();
+                    // Don't bother with the rest of the broadcasting
+                    return;
+                }
+                _msr.updateNotification();
             }
 
+            Log.d(TAG, "Sharing own music");
             // Use _isbroadcasting to track the status of the receiver
             _isBroadcasting = true;
             registerReceiver(_msr, _msr.getFilter());
 
-            Requester.requestStopListen(Globals.getSpotifyUsername());
+            //Requester.requestStopListen(Globals.getSpotifyUsername());
 
             broadcastBtn.setText(getString(R.string.stop_sharing));
-            StatusNotificationManager.notify(this, "Sharing your music",
-                    trackName + " - " + artist);
 
             _broadcastRequesterThread.setIsEnabled(false);
         }
@@ -145,12 +176,6 @@ public class MainActivity extends AppCompatActivity {
     public void connectToStream(String listenerUsername, String streamerUsername) {
         Log.d(TAG, "Starting to connect to stream from " + streamerUsername);
         try {
-            if(_isBroadcasting) {
-                Toast.makeText(this,
-                        "Can't connect to stream while sharing",
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
             JSONObject listenResponse =  Requester.requestListen(listenerUsername,
                     streamerUsername);
 
@@ -160,6 +185,11 @@ public class MainActivity extends AppCompatActivity {
             Globals.getStreamService().connectToSong(listenResponse);
             Log.d(TAG, "Started listening to " + streamerUsername);
 
+            Toast.makeText(this,
+                    getString(R.string.now_listening_to) + ' '
+                    + streamerUsername + getString(R.string.apostrophes_radio),
+                    Toast.LENGTH_SHORT).show();
+
         } catch (JSONException e){
             Log.e(TAG, "Could not properly parse listenResponse JSON", e);
             Toast.makeText(this, "Error connecting to stream " + e.getMessage(),
@@ -167,13 +197,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void disconnectFromStream() {
+        _broadcastRequesterThread.setStreamer(null);
+        Globals.getStreamService().stopMusic();
+        StatusNotificationManager.cancel(this);
+
+        Requester.requestStopListen(Globals.getSpotifyUsername());
+    }
+
+    public boolean isBroadcasting() {
+        return _isBroadcasting;
+    }
+
     @Override
     protected void onDestroy() {
        super.onDestroy();
        if(_isBroadcasting) {
            StatusNotificationManager.cancel(this);
-           unregisterReceiver(_msr);
            _isBroadcasting = false;
        }
+        unregisterReceiver(_msr);
     }
 }

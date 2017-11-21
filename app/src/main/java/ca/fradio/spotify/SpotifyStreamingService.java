@@ -239,13 +239,17 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
         }
         */
 
-        new UpdateNotificationTask().execute("", hostusername);
+        updateNotification("", hostusername);
+    }
+
+    public void updateNotification(String afterSongMsg, String hostUsername) {
+        new UpdateNotificationTask().execute(afterSongMsg, hostUsername);
     }
 
     public void pause(String hostusername) {
         Log.d(TAG, "pause");
         player.pause(mOperationCallback);
-        new UpdateNotificationTask().execute(" (Paused)", hostusername);
+        updateNotification(" (Paused)", hostusername);
     }
 
     public void seek(int position) {
@@ -253,8 +257,10 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
         player.seekToPosition(mOperationCallback, position);
     }
 
-    public void stop() {
-        Log.d(TAG, "stop");
+    public void stopMusic() {
+        Log.d(TAG, "stopMusic");
+        player.pause(mOperationCallback);
+
     }
 
     private class UpdateNotificationTask extends AsyncTask<String, Void, Void> {
@@ -275,13 +281,9 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
                     elapsed += 500;
                     Metadata.Track track = player.getMetadata().currentTrack;
                     if (track != null) {
-                        String name = track.name;
-                        String artist = track.artistName;
-                        Log.d(TAG, "Updating notification for song: " + name);
-                        StatusNotificationManager.notify(
-                                SpotifyStreamingService.this,
-                                host + getString(R.string.apostrophes_radio),
-                                name + " - " + artist + " " + msg);
+                        StatusNotificationManager.setStreamingTrack(
+                               SpotifyStreamingService.this,
+                                host, track.name, track.artistName, track.albumName);
                         break;
                     }
                 }
@@ -338,8 +340,6 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
 
         if (isPlaying == 1) {
             playTrack(hostusername, trackid, trackTime);
-            toast(handler, getString(R.string.now_listening_to) + ' ' + hostusername +
-                            getString(R.string.apostrophes_radio), Toast.LENGTH_SHORT);
         } else {
             pause(hostusername);
             toast(handler, getString(R.string.app_name) + getString(R.string.paused),
@@ -354,5 +354,9 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
                 Toast.makeText(SpotifyStreamingService.this, msg, len).show();
             }
         });
+    }
+
+    public Metadata.Track getCurrentTrack() {
+        return player.getMetadata().currentTrack;
     }
 }

@@ -9,8 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:gravity="center_vertical|left"
-        android:text="TextViewWithText"
+        android:gravity="center_vertical|start"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <ImageButton
@@ -20,7 +19,9 @@
         android:layout_weight="1"
         android:background="@null"
         android:elevation="0dp"
-        android:gravity="center_vertical|right"
+        android:minHeight="64dp"
+        android:minWidth="64dp"
+        android:gravity="center_vertical|end"
         android:scaleType="fitEnd"
         android:src="@drawable/broadcast_64" />
 
