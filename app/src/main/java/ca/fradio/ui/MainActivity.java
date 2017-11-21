@@ -1,18 +1,13 @@
 package ca.fradio.ui;
 
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import com.spotify.sdk.android.player.Metadata;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG, "Starting broadcast requester");
         _broadcastRequesterThread.start();
+        // Disabled until connect to a stream
+        _broadcastRequesterThread.setIsEnabled(false);
 
         final Button broadcastBtn = findViewById(R.id.btn_broadcast);
         broadcastBtn.setOnClickListener(new View.OnClickListener() {
@@ -93,6 +90,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void toggleIsBroadcasting() {
+        /*
+        if(_broadcastRequesterThread.isEnabled()) {
+            // The user is currently connected to a stream
+            Toast.makeText(this,
+                    "Cannot stream while listening to someone else's music",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }*/
+
         final Button broadcastBtn = findViewById(R.id.btn_broadcast);
         if(_isBroadcasting) {
             Log.d(TAG, "Stopped broadcasting");
@@ -114,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "Started broadcasting");
 
             String trackName = _msr.getMostRecentTrack();
-            String artist = _msr.getCurrentArtist();
+            String artist = _msr.getMostRecentArtist();
             if(trackName == null) {
                 Toast.makeText(this, "You are not playing any music!",
                         Toast.LENGTH_SHORT).show();
@@ -148,7 +154,8 @@ public class MainActivity extends AppCompatActivity {
             JSONObject listenResponse =  Requester.requestListen(listenerUsername,
                     streamerUsername);
 
-            BroadcastRequesterThread.instance().setStreamer(streamerUsername);
+            _broadcastRequesterThread.setStreamer(streamerUsername);
+            _broadcastRequesterThread.setIsEnabled(true);
 
             Globals.getStreamService().connectToSong(listenResponse);
             Log.d(TAG, "Started listening to " + streamerUsername);

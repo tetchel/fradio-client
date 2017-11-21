@@ -56,13 +56,12 @@ public class BroadcastRequesterThread extends Thread {
                 }
 
                 newBroadcastID = listenResponse.getString("broadcast_id");
-                newBroadcastID = "";
 
-                Log.d(TAG, newBroadcastID + " vs. " + currBroadcastID);
+                //Log.d(TAG, newBroadcastID + " vs. " + currBroadcastID);
                 if (!newBroadcastID.equals(currBroadcastID)) {
-                        Log.d(TAG, listenResponse.toString());
-                        Globals.getStreamService().connectToSong(listenResponse);
-                        Log.d(TAG, "STARTING NEW SONG THROUGH BRT");
+                    Log.d(TAG, listenResponse.toString());
+                    Globals.getStreamService().connectToSong(listenResponse);
+                    Log.d(TAG, "STARTING NEW SONG THROUGH BRT");
                 }
 
             } catch (JSONException e) {
