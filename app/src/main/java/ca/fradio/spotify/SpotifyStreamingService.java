@@ -1,7 +1,5 @@
 package ca.fradio.spotify;
 
-import ca.fradio.net.Requester;
-
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -33,6 +31,7 @@ import org.json.JSONObject;
 
 import ca.fradio.Globals;
 import ca.fradio.R;
+import ca.fradio.net.Requester;
 
 public class SpotifyStreamingService extends Service implements ConnectionStateCallback,
         Player.NotificationCallback {
@@ -336,7 +335,7 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
             toast(handler, "Current track has ended", Toast.LENGTH_SHORT);
         }
 
-        if (isPlaying==0) {
+        if (isPlaying == 1) {
             playTrack(hostusername, trackid, trackTime);
             toast(handler, getString(R.string.now_listening_to) + ' ' + hostusername +
                             getString(R.string.apostrophes_radio), Toast.LENGTH_SHORT);
