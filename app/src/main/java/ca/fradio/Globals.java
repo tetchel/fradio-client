@@ -14,6 +14,7 @@ public class Globals {
         return spotifyUsername;
     }
 
+
     private static SpotifyStreamingService streamService;
 
     public static void setStreamService(SpotifyStreamingService newStreamService) {
@@ -23,6 +24,7 @@ public class Globals {
     public static SpotifyStreamingService getStreamService() {
         return streamService;
     }
+
 
     private static final String CLIENT_ID = "43e13eb4a573489e8413bc9d83c95719";
 

@@ -38,7 +38,7 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
 
     private static final String TAG = "SpotifyStreamingService";
 
-    private StreamServiceBinder streamBinder = new StreamServiceBinder();
+    private StreamServiceBinder serviceBinder = new StreamServiceBinder();
 
     private Player player;
 
@@ -54,9 +54,7 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
 
         setUpNetworkStateReceiver();
 
-        StatusNotificationManager.instance().setContext(this);
-
-        return streamBinder;
+        return serviceBinder;
     }
 
     @Override
@@ -110,9 +108,7 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
         Requester.requestDisconnect(Globals.getSpotifyUsername());
     }
 
-    public void onAuthenticationComplete(String token)
-        {
-
+    public void onAuthenticationComplete(String token) {
         // Once we have obtained an authorization token, we can proceed with creating a Player.
         Log.d(TAG, "Got authentication token");
         if (player == null) {
@@ -278,7 +274,8 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
                     if (track != null) {
                         String name = track.name;
                         Log.d(TAG, "Updating notification for song: " + name);
-                        StatusNotificationManager.instance().setMsg(
+                        StatusNotificationManager.notify(
+                                SpotifyStreamingService.this,
                                 host + getString(R.string.apostrophes_radio),
                                 name + " " + msg);
                         break;

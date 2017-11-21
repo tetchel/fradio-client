@@ -1,48 +1,63 @@
 package ca.fradio.spotify;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import ca.fradio.R;
 
 public class StatusNotificationManager {
 
-    private static StatusNotificationManager instance;
-
-    private Context context;
-
-    private NotificationCompat.Builder builder;
-
-    private NotificationManager notificationManager;
+    private static final String TAG = StatusNotificationManager.class.getSimpleName();
 
     private static final int NOTIF_ID = 0;
 
-    public static StatusNotificationManager instance() {
-        if(instance == null) {
-            instance = new StatusNotificationManager();
-        }
-        return instance;
-    }
+    private static boolean notifIsBeingShown = false;
 
-    // Can't do anything before set context - This is basically the constructor.
-    // There is probably a better way to do this
-    public void setContext(Context c) {
-        context = c;
+    public static void notify(Context context, String title, String msg) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+                .setSmallIcon(R.drawable.ic_launcher_foreground);  //  should be album art
 
-        builder = new NotificationCompat.Builder(context)
-                .setSmallIcon(R.drawable.ic_launcher_background);   //  should be album art
-
-        notificationManager = (NotificationManager)
+        NotificationManager notificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
-    }
 
-    public void stop() {
-        notificationManager.cancel(NOTIF_ID);
-    }
+        if(notificationManager == null) {
+            Log.e(TAG, "Unable to get notification manager to notify!!");
+            return;
+        }
 
-    public void setMsg(String title, String msg) {
         builder.setContentText(msg).setContentTitle(title);
+
+        if(!notifIsBeingShown) {
+            notifIsBeingShown = true;
+            // Make the notification pop up on top
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                builder.setPriority(NotificationManager.IMPORTANCE_HIGH);
+            }
+            else {
+                builder.setPriority(Notification.PRIORITY_HIGH);
+            }
+        }
+
+        builder.setOngoing(true);
+
         notificationManager.notify(NOTIF_ID, builder.build());
+    }
+
+    public static void cancel(Context context) {
+        NotificationManager notificationManager = (NotificationManager)
+                context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if(notificationManager == null) {
+            Log.e(TAG, "Unable to get notification manager to cancel notification!!");
+            return;
+        }
+
+        notifIsBeingShown = false;
+        notificationManager.cancel(NOTIF_ID);
     }
 }

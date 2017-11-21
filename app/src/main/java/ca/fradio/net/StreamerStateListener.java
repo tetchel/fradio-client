@@ -12,12 +12,12 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Listener extends Service {
+public class StreamerStateListener extends Service {
 
     private static final String TAG = "ListenerService";
 
     // Singleton instance to be called to get access to the Application Context from static code
-    private static Listener INSTANCE;
+    private static StreamerStateListener INSTANCE;
 
     private static final int PORT = 16987;
 
@@ -70,7 +70,7 @@ public class Listener extends Service {
      * @return If this service is running. Only one instance of this service can run at a time.
      */
     public static boolean isRunning() {
-        Listener instance = instance();
+        StreamerStateListener instance = instance();
         if(instance == null) {
             return false;
         }
@@ -81,7 +81,7 @@ public class Listener extends Service {
         for (ActivityManager.RunningServiceInfo runningService : manager
                 .getRunningServices(Integer.MAX_VALUE)) {
 
-            if (Listener.class.getName().equals(runningService.service.getClassName())) {
+            if (StreamerStateListener.class.getName().equals(runningService.service.getClassName())) {
                 return true;
             }
         }
@@ -93,7 +93,7 @@ public class Listener extends Service {
      *
      * @return The singleton instance.
      */
-    public static Listener instance() {
+    public static StreamerStateListener instance() {
         return INSTANCE;
     }
 

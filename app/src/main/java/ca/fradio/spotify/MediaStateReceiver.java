@@ -4,7 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
 import android.util.Log;
+
+import com.spotify.sdk.android.player.Metadata;
 
 import ca.fradio.Globals;
 import ca.fradio.net.Requester;
@@ -15,6 +18,8 @@ public class MediaStateReceiver extends BroadcastReceiver {
     private static final String TAG = "MediaStateReceiver";
     private IntentFilter filter;
 
+    private static String   currentTrackName,
+                            currentArtist;
 
     private static final class SpotifyBroadcasts {
         static final String SPOTIFY_PACKAGE = "com.spotify.music";
@@ -52,18 +57,28 @@ public class MediaStateReceiver extends BroadcastReceiver {
 
         // The currentTrackId must always be set, or there will be an error.
         String currentTrackId = intent.getStringExtra("id");
+
         int trackLengthInSec = intent.getIntExtra("length", 0);
         boolean playing = intent.getBooleanExtra("playing", false);
 
+        // Metadata.Track track =
+        //mostRecentTrack = (Metadata.Track) intent.getExtras().get("track");
+
+        /*
+        Log.d(TAG, "KEYS FOLLOW:");
+
+        for(String key : intent.getExtras().keySet()) {
+            Log.d(TAG, key);
+        }*/
+
         if (action.equals(SpotifyBroadcasts.METADATA_CHANGED)) {
-            //String artistName = intent.getStringExtra("artist");
+            Log.d(TAG, "Metadata Changed");
+            currentTrackName = intent.getStringExtra("track");
+            currentArtist = intent.getStringExtra("artist");
             //String albumName = intent.getStringExtra("album");
-            //String trackName = intent.getStringExtra("track");
-            // Start a timer to find out when this song is going to end
 
             //Log.d(TAG, String.format("trackid %s artist %s album %s track %s len %d",
             //        trackId, artistName, albumName, trackName, trackLengthInSec));
-            Log.d(TAG, "Metadata Changed");
 
             broadcast(currentTrackId, age, trackLengthInSec, playing);
         } else if (action.equals(SpotifyBroadcasts.PLAYBACK_STATE_CHANGED)) {
@@ -84,5 +99,13 @@ public class MediaStateReceiver extends BroadcastReceiver {
                 + " length " + trackLength + " playing " + playing);
 
         Requester.requestBroadcast(Globals.getSpotifyUsername(), trackid, positionMs, trackLength, playing);
+    }
+
+    public String getMostRecentTrack() {
+        return currentTrackName;
+    }
+
+    public String getCurrentArtist() {
+        return currentArtist;
     }
 }

@@ -52,17 +52,17 @@ public class StreamerListAdapter extends ArrayAdapter<UserInfo> {
         View rowView = inflater.inflate(R.layout.streamer_list_item, null, true);
 
         TextView usernameTxt = rowView.findViewById(R.id.txt_username);
-        ImageButton submitButton = rowView.findViewById(R.id.btn_submit);
+        ImageButton joinStreamButton = rowView.findViewById(R.id.btn_submit);
 
         // Disallow connecting to stream if you are streaming, or if current user in list is not
         if(!streamers.get(position).isStreaming() ||
                 !BroadcastRequesterThread.instance().isEnabled()) {
 
-            submitButton.setVisibility(View.INVISIBLE);
+            joinStreamButton.setVisibility(View.INVISIBLE);
         }
 
         usernameTxt.setText(streamers.get(position).getUsername());
-        submitButton.setOnClickListener(new View.OnClickListener(){
+        joinStreamButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 connectToStream(Globals.getSpotifyUsername(),
                         streamers.get(position).getUsername());
