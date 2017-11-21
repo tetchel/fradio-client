@@ -34,7 +34,7 @@
         android:id="@+id/btn_broadcast"
         android:layout_width="210dp"
         android:layout_height="55dp"
-        android:text="@string/start_streaming"
+        android:text="@string/share_your_music"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
         app:layout_constraintEnd_toStartOf="@+id/search_button"
         app:layout_constraintHorizontal_bias="0.2"

@@ -14,6 +14,9 @@ import android.widget.Toast;
 
 import com.spotify.sdk.android.player.Metadata;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import ca.fradio.UserInfo;
@@ -101,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
             Requester.requestDisconnect(Globals.getSpotifyUsername());
 
-            broadcastBtn.setText(getString(R.string.start_streaming));
+            broadcastBtn.setText(getString(R.string.share_your_music));
 
             StatusNotificationManager.cancel(this);
 
@@ -125,17 +128,35 @@ public class MainActivity extends AppCompatActivity {
 
             Requester.requestStopListen(Globals.getSpotifyUsername());
 
-            broadcastBtn.setText(getString(R.string.stop_streaming));
+            broadcastBtn.setText(getString(R.string.stop_sharing));
             StatusNotificationManager.notify(this, "Sharing your music",
                     trackName + " - " + artist);
 
             _broadcastRequesterThread.setIsEnabled(false);
         }
+    }
 
-        // If you are broadcasting, do not allow connecting to streams
-        // If you are not broadcasting, re-enable connecting to streams
-        for(View view : ((View)findViewById(R.id.list_streamers)).getTouchables()) {
-            view.setEnabled(!_isBroadcasting);
+    public void connectToStream(String listenerUsername, String streamerUsername) {
+        Log.d(TAG, "Starting to connect to stream from " + streamerUsername);
+        try {
+            if(_isBroadcasting) {
+                Toast.makeText(this,
+                        "Can't connect to stream while sharing",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            JSONObject listenResponse =  Requester.requestListen(listenerUsername,
+                    streamerUsername);
+
+            BroadcastRequesterThread.instance().setStreamer(streamerUsername);
+
+            Globals.getStreamService().connectToSong(listenResponse);
+            Log.d(TAG, "Started listening to " + streamerUsername);
+
+        } catch (JSONException e){
+            Log.e(TAG, "Could not properly parse listenResponse JSON", e);
+            Toast.makeText(this, "Error connecting to stream " + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
         }
     }
 

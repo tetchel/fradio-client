@@ -25,13 +25,13 @@ import ca.fradio.net.Requester;
 public class StreamerListAdapter extends ArrayAdapter<UserInfo> {
     private static final String TAG = "StreamerListAdapter";
 
-    private final Activity activity;
+    private final MainActivity activity;
     private final ArrayList<UserInfo> streamers;
 
-    public StreamerListAdapter(Activity activityIn, ArrayList<UserInfo> streamersIn) {
-        super(activityIn, R.layout.streamer_list_item, streamersIn);
+    public StreamerListAdapter(MainActivity mainActivity, ArrayList<UserInfo> streamersIn) {
+        super(mainActivity, R.layout.streamer_list_item, streamersIn);
 
-        activity = activityIn;
+        activity = mainActivity;
         streamers = streamersIn;
 
         // You cannot stream from yourself
@@ -64,7 +64,7 @@ public class StreamerListAdapter extends ArrayAdapter<UserInfo> {
         usernameTxt.setText(streamers.get(position).getUsername());
         joinStreamButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                connectToStream(Globals.getSpotifyUsername(),
+                activity.connectToStream(Globals.getSpotifyUsername(),
                         streamers.get(position).getUsername());
             }
         });
@@ -72,22 +72,5 @@ public class StreamerListAdapter extends ArrayAdapter<UserInfo> {
         return rowView;
     }
 
-    private void connectToStream(String listenerUsername, String streamerUsername) {
-        Log.d(TAG, "Starting to connect to stream from " + streamerUsername);
-        try {
-            JSONObject listenResponse =  Requester.requestListen(listenerUsername,
-                    streamerUsername);
 
-            BroadcastRequesterThread.instance().setStreamer(streamerUsername);
-
-            Globals.getStreamService().connectToSong(listenResponse);
-            Toast.makeText(activity, activity.getString(R.string.now_listening_to) + " "
-                    + streamerUsername, Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "Started listening to " + streamerUsername);
-        } catch (JSONException e){
-            Log.e(TAG, "Could not properly parse listenResponse JSON", e);
-            Toast.makeText(activity, "Error connecting to stream " + e.getMessage(),
-                    Toast.LENGTH_LONG).show();
-        }
-    }
 }
