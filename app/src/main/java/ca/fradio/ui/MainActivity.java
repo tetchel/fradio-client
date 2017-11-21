@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     private StreamerListAdapter _listAdapter;
 
-    private final BroadcastRequesterThread broadcastRequesterThread =
+    private final BroadcastRequesterThread _broadcastRequesterThread =
             new BroadcastRequesterThread();
 
     @Override
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
         listView.setAdapter(_listAdapter);
 
-        broadcastRequesterThread.start();
+        _broadcastRequesterThread.start();
         Log.d(TAG, "Started broadcast requester");
 
         final Button broadcastBtn = findViewById(R.id.btn_broadcast);
@@ -63,8 +63,9 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "Stopped broadcasting");
             Requester.requestDisconnect(Globals.getSpotifyUsername());
 
+            // You MUST unregister the MSR here, and in onDestroy or it will leak
+            // Use _isbroadcasting to track the status of the receiver
             unregisterReceiver(_msr);
-
             _isBroadcasting = false;
 
             Toast.makeText(MainActivity.this, "Stopped broadcasting",
@@ -72,14 +73,14 @@ public class MainActivity extends AppCompatActivity {
 
             broadcastBtn.setText("Start Streaming");
 
-            broadcastRequesterThread.setIsEnabled(true);
+            _broadcastRequesterThread.setIsEnabled(true);
         }
         else {
             Log.d(TAG, "Started broadcasting");
             Requester.requestStopListen(Globals.getSpotifyUsername());
 
+            // Use _isbroadcasting to track the status of the receiver
             registerReceiver(_msr, _msr.getFilter());
-
             _isBroadcasting = true;
 
             Toast.makeText(MainActivity.this, "Started broadcasting",
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
             broadcastBtn.setText("Stop Streaming");
 
-            broadcastRequesterThread.setIsEnabled(false);
+            _broadcastRequesterThread.setIsEnabled(false);
         }
 
         // If you are broadcasting, do not allow connecting to streams
