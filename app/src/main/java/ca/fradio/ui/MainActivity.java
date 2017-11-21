@@ -143,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
        super.onDestroy();
        if(_isBroadcasting) {
+           StatusNotificationManager.cancel(this);
            unregisterReceiver(_msr);
            _isBroadcasting = false;
        }

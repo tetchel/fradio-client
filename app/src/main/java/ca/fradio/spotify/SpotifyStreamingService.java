@@ -1,5 +1,6 @@
 package ca.fradio.spotify;
 
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -92,6 +93,8 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "OnDestroy");
+
+        StatusNotificationManager.cancel(this);
 
         unregisterReceiver(networkStateReceiver);
         // Note that calling Spotify.destroyPlayer() will also remove any callbacks on whatever
