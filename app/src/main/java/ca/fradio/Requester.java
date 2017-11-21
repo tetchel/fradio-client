@@ -161,8 +161,9 @@ public class Requester {
                 // No args (for now)
                 String query = "";
 
+                Log.d(TAG, "Streamers request");
                 JSONObject res = doRequest("streamers", query);
-                Log.d("Poo", res.toString());
+                Log.d(TAG, res.toString());
                 return res;
             } catch (JSONException | IOException e) {
                 Log.e(TAG, "StreamerReq Catastrophe!", e);
@@ -180,6 +181,7 @@ public class Requester {
                 spotifyUsername = URLEncoder.encode(spotifyUsername, ENCODING);
                 String query = PARAM_SPOTIFY_USERNAME + '=' + spotifyUsername;
 
+                Log.d(TAG, "Disconnect request");
                 JSONObject res = doRequest("disconnect", query);
                 Log.d(TAG, res.toString());
                 return res;
@@ -199,6 +201,7 @@ public class Requester {
                 spotifyUsername = URLEncoder.encode(spotifyUsername, ENCODING);
                 String query = PARAM_SPOTIFY_USERNAME + '=' + spotifyUsername;
 
+                Log.d(TAG, "StopListen request");
                 JSONObject res = doRequest("stop_listen", query);
                 Log.d(TAG, res.toString());
                 return res;

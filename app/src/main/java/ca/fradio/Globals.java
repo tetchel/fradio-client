@@ -29,13 +29,4 @@ public class Globals {
     public static String getClientId() {
         return CLIENT_ID;
     }
-
-    private static String streamer;
-    public static String getStreamer() {
-        return streamer;
-    }
-    public static void setStreamer(String streamer) {
-        Globals.streamer = streamer;
-    }
-
 }

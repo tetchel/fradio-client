@@ -9,25 +9,32 @@ public class BroadcastRequesterThread extends Thread {
 
     private static final String TAG = "BroadcastReqThread";
 
+    private static BroadcastRequesterThread instance;
+
     private String currBroadcastID;
 
     private boolean isEnabled = true;
 
+    private String streamer;
+
+    public static BroadcastRequesterThread instance() {
+        if(instance == null) {
+            instance = new BroadcastRequesterThread();
+        }
+        return instance;
+    }
+
     @Override
     public void run(){
-        while(true) {
+        while(!isInterrupted()) {
             try {
                 sleep(3500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
-            if(!isEnabled) {
-                continue;
-            }
-
-            String streamer = Globals.getStreamer();
-            if(streamer == null) {
+            if(!isEnabled || streamer == null) {
+                // Not listening to anything right now
                 continue;
             }
 
@@ -67,4 +74,6 @@ public class BroadcastRequesterThread extends Thread {
     public void setIsEnabled(boolean enabled) {
         this.isEnabled = enabled;
     }
+
+    public void setStreamer(String streamer) { this.streamer = streamer; }
 }
