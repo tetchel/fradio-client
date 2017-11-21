@@ -1,6 +1,5 @@
 package ca.fradio.ui;
 
-import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,35 +8,33 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 import ca.fradio.Globals;
+import ca.fradio.InactiveInfo;
+import ca.fradio.ListenerInfo;
 import ca.fradio.R;
+import ca.fradio.StreamerInfo;
 import ca.fradio.UserInfo;
 import ca.fradio.net.BroadcastRequesterThread;
-import ca.fradio.net.Requester;
 
 public class StreamerListAdapter extends ArrayAdapter<UserInfo> {
-    private static final String TAG = "StreamerListAdapter";
+    private static final String TAG = "UserListAdapter";
 
     private final MainActivity activity;
-    private final ArrayList<UserInfo> streamers;
+    private final ArrayList<UserInfo> users;
 
-    public StreamerListAdapter(MainActivity mainActivity, ArrayList<UserInfo> streamersIn) {
-        super(mainActivity, R.layout.streamer_list_item, streamersIn);
+    public StreamerListAdapter(MainActivity mainActivity, ArrayList<UserInfo> usersIn) {
+        super(mainActivity, R.layout.user_list_item, usersIn);
 
         activity = mainActivity;
-        streamers = streamersIn;
+        users = usersIn;
 
         // You cannot stream from yourself
-        for(int i = 0; i < streamers.size(); i++) {
-            if(streamers.get(i).getUsername().equalsIgnoreCase(Globals.getSpotifyUsername())) {
-                streamers.remove(i);
+        for(int i = 0; i < users.size(); i++) {
+            if(users.get(i).getUsername().equalsIgnoreCase(Globals.getSpotifyUsername())) {
+                users.remove(i);
                 break;
             }
         }
@@ -49,23 +46,37 @@ public class StreamerListAdapter extends ArrayAdapter<UserInfo> {
         Log.d(TAG, "getview");
 
         LayoutInflater inflater = activity.getLayoutInflater();
-        View rowView = inflater.inflate(R.layout.streamer_list_item, null, true);
+        View rowView = inflater.inflate(R.layout.user_list_item, null, true);
 
         TextView usernameTxt = rowView.findViewById(R.id.txt_username);
-        ImageButton joinStreamButton = rowView.findViewById(R.id.btn_submit);
+        TextView detailTxt = rowView.findViewById(R.id.txt_detail);
+        ImageButton joinStreamButton = rowView.findViewById(R.id.btn_listen);
 
-        // Disallow connecting to stream if you are streaming, or if current user in list is not
-        if(!streamers.get(position).isStreaming() ||
-                !BroadcastRequesterThread.instance().isEnabled()) {
+        final UserInfo user = users.get(position);
+        usernameTxt.setText(user.getUsername());
 
+        if (user instanceof ListenerInfo){
+            ListenerInfo info = (ListenerInfo) user;
+            detailTxt.setText("Listening to " + info.getListening() + "\'s Radio");
+        } else if (user instanceof StreamerInfo){
+            StreamerInfo info = (StreamerInfo) user;
+            detailTxt.setText("Streaming great music");
+        } else if (user instanceof InactiveInfo){
+            InactiveInfo info = (InactiveInfo) user;
+            detailTxt.setText("Offline");
+
+        }
+
+
+        // Disallow connecting to stream if you are streaming
+        if(!BroadcastRequesterThread.instance().isEnabled()) {
             joinStreamButton.setVisibility(View.INVISIBLE);
         }
 
-        usernameTxt.setText(streamers.get(position).getUsername());
         joinStreamButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 activity.connectToStream(Globals.getSpotifyUsername(),
-                        streamers.get(position).getUsername());
+                        user.getUsername());
             }
         });
 

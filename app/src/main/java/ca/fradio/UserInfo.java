@@ -4,18 +4,12 @@ package ca.fradio;
 public class UserInfo {
 
     private String username;
-    private boolean isStreaming;
 
-    public UserInfo(String username, boolean isStreaming) {
+    public UserInfo(String username) {
         this.username = username;
-        this.isStreaming = isStreaming;
     }
 
     public String getUsername() {
         return username;
-    }
-
-    public boolean isStreaming() {
-        return isStreaming;
     }
 }

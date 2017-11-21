@@ -34,7 +34,7 @@ public class SpotifyLoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
+        //setContentView(R.user_list_item.activity_main);
         Log.d(TAG, "Launching Spotify Auth");
 
         openLoginWindow();

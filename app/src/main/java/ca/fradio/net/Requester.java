@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
+import ca.fradio.InactiveInfo;
+import ca.fradio.ListenerInfo;
+import ca.fradio.StreamerInfo;
 import ca.fradio.UserInfo;
 
 public class Requester {
@@ -74,6 +77,16 @@ public class Requester {
     public static ArrayList<UserInfo> requestStreamers() {
         try {
             JSONObject jso = new StreamersRequester().execute().get();
+            return getUserInfo(jso);
+        } catch (InterruptedException | ExecutionException | JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static ArrayList<UserInfo> requestUsers() {
+        try {
+            JSONObject jso = new UsersRequester().execute().get();
             return getUserInfo(jso);
         } catch (InterruptedException | ExecutionException | JSONException e) {
             e.printStackTrace();
@@ -176,6 +189,25 @@ public class Requester {
         }
     }
 
+    private static class UsersRequester extends AsyncTask<String, Void, JSONObject> {
+        @Override
+        protected JSONObject doInBackground(String... strings) {
+
+            try {
+                // No args (for now)
+                String query = "";
+
+                Log.d(TAG, "Users request");
+                JSONObject res = doRequest("users", query);
+                Log.d(TAG, res.toString());
+                return res;
+            } catch (JSONException | IOException e) {
+                Log.e(TAG, "UsersReq Catastrophe!", e);
+                return null;
+            }
+        }
+    }
+
     private static class DisconnectRequester extends AsyncTask<String, Void, JSONObject> {
         @Override
         protected JSONObject doInBackground(String... strings) {
@@ -231,17 +263,31 @@ public class Requester {
             Log.e(TAG, "Null JsonObject passed to getUserInfo)");
             return result;
         }
-        JSONArray userInfoJsa = jso.getJSONArray("streamers");
+        JSONArray userInfoJsa = jso.getJSONArray("users");
 
         try {
             for(int i = 0; i < userInfoJsa.length(); i++) {
                 JSONObject user = userInfoJsa.getJSONObject(i);
                 String username = user.getString("name");
-                int streamStatus = user.getInt("status");
-                boolean isOnline = streamStatus == 1;
-                Log.d(TAG, "A streamer : " + username + " is online ? " + streamStatus);
+                String status = user.getString("status");
+                UserInfo userInfo;
+                switch(status){
+                    case "S":
+                        boolean isPlaying = user.getInt("is_playing") == 1;
+                        userInfo = new StreamerInfo(username, isPlaying);
+                        break;
 
-                result.add(new UserInfo(username, isOnline));
+                    case "L":
+                        String listening = user.getString("listening");
+                        userInfo = new ListenerInfo(username, listening);
+                        break;
+
+                    default:
+                        userInfo = new InactiveInfo(username);
+                        break;
+                }
+
+                result.add(userInfo);
             }
         } catch (JSONException e) {
             Log.e(TAG, "Error parsing JSON of streamers", e);

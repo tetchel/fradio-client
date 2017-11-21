@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Log.d(TAG, "Finished setting up swipe refresh layout");
+        Log.d(TAG, "Finished setting up swipe refresh user_list_item");
 
         // Populate the list for the first time
         refreshUsersList();
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG, "Refreshing list of users");
         final ListView listView = findViewById(R.id.list_streamers);
-        ArrayList<UserInfo> streamers = Requester.requestStreamers();
+        ArrayList<UserInfo> streamers = Requester.requestUsers();
 
         StreamerListAdapter _listAdapter = new StreamerListAdapter(this, streamers);
         listView.setAdapter(_listAdapter);
