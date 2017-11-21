@@ -16,7 +16,7 @@
         <activity android:name=".ui.MainActivity"/>
 
         <service android:name=".spotify.SpotifyStreamingService" />
-        <service android:name=".Listener" />
+        <service android:name=".net.Listener" />
 
         <activity android:name=".ui.SetupActivity">
             <intent-filter>

@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -16,31 +15,36 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Map;
 
-import ca.fradio.BroadcastRequesterThread;
+import ca.fradio.UserInfo;
+import ca.fradio.net.BroadcastRequesterThread;
 import ca.fradio.Globals;
 import ca.fradio.R;
-import ca.fradio.Requester;
+import ca.fradio.net.Requester;
 
 public class StreamerListAdapter extends ArrayAdapter<String> {
     private static final String TAG = "StreamerListAdapter";
 
     private final Activity context;
-    private final ArrayList<String> streamers;
+    private final ArrayList<UserInfo> streamers;
 
-    public StreamerListAdapter(Activity context, ArrayList<String> streamers) {
-        super(context, R.layout.streamer_list_item, streamers);
+    public StreamerListAdapter(Activity context, ArrayList<UserInfo> streamers) {
+        super(context, R.layout.streamer_list_item);
+
         this.context = context;
         this.streamers = streamers;
 
         // You cannot stream from yourself
         for(int i = 0; i < streamers.size(); i++) {
-            if(streamers.get(i).equalsIgnoreCase(Globals.getSpotifyUsername())) {
+            if(streamers.get(i).getUsername().equalsIgnoreCase(Globals.getSpotifyUsername())) {
                 streamers.remove(i);
+                break;
             }
         }
     }
 
+    @NonNull
     @Override
     public View getView(final int position, View view, @NonNull ViewGroup parent) {
         Log.d(TAG, "getview");
@@ -51,10 +55,18 @@ public class StreamerListAdapter extends ArrayAdapter<String> {
         TextView usernameTxt = rowView.findViewById(R.id.txt_username);
         ImageButton submitButton = rowView.findViewById(R.id.btn_submit);
 
-        usernameTxt.setText(streamers.get(position));
+        // Disallow connecting to stream if you are streaming, or if current user in list is not
+        if(!streamers.get(position).isStreaming() ||
+                !BroadcastRequesterThread.instance().isEnabled()) {
+
+            submitButton.setVisibility(View.INVISIBLE);
+        }
+
+        usernameTxt.setText(streamers.get(position).getUsername());
         submitButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                connectToStream(Globals.getSpotifyUsername(), streamers.get(position));
+                connectToStream(Globals.getSpotifyUsername(),
+                        streamers.get(position).getUsername());
             }
         });
 
@@ -62,6 +74,7 @@ public class StreamerListAdapter extends ArrayAdapter<String> {
     }
 
     private void connectToStream(String listenerUsername, String streamerUsername) {
+        Log.d(TAG, "Starting to connect to stream from " + streamerUsername);
         try {
             JSONObject listenResponse =  Requester.requestListen(listenerUsername,
                     streamerUsername);

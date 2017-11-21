@@ -1,4 +1,4 @@
-package ca.fradio;
+package ca.fradio.net;
 
 import android.app.Service;
 import android.app.ActivityManager;
@@ -11,8 +11,6 @@ import android.util.Log;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import static ca.fradio.Requester.readAllFromInputStream;
 
 public class Listener extends Service {
 
@@ -123,7 +121,7 @@ class ListenerThread extends Thread {
                 Socket acceptance = listenerSocket.accept();
                 Log.d(TAG, "Accepted something");
 
-                String request = readAllFromInputStream(acceptance.getInputStream());
+                String request = Requester.readAllFromInputStream(acceptance.getInputStream());
 
                 Log.d(TAG, request);
             }

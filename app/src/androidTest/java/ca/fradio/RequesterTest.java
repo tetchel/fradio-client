@@ -1,15 +1,8 @@
 package ca.fradio;
 
-import android.app.Instrumentation;
-import android.content.Intent;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.InstrumentationTestCase;
-import android.widget.Button;
-
-import com.spotify.sdk.android.authentication.AuthenticationClient;
-import com.spotify.sdk.android.authentication.AuthenticationResponse;
-import com.spotify.sdk.android.player.Player;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,7 +12,7 @@ import org.junit.runner.RunWith;
 
 import java.util.concurrent.ExecutionException;
 
-import ca.fradio.spotify.SpotifyStreamingService;
+import ca.fradio.net.Requester;
 import ca.fradio.ui.SetupActivity;
 
 @RunWith(AndroidJUnit4.class)

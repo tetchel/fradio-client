@@ -1,6 +1,6 @@
 package ca.fradio.spotify;
 
-import ca.fradio.Requester;
+import ca.fradio.net.Requester;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;

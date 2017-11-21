@@ -1,6 +1,5 @@
 package ca.fradio.spotify;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -22,7 +21,7 @@ import java.util.concurrent.ExecutionException;
 import javax.net.ssl.HttpsURLConnection;
 
 import ca.fradio.Globals;
-import ca.fradio.Requester;
+import ca.fradio.net.Requester;
 
 public class SpotifyLoginActivity extends Activity {
 
