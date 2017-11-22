@@ -45,6 +45,8 @@ public class StatusNotificationManager {
 
         builder.setOngoing(true);
 
+        
+
         notificationManager.notify(NOTIF_ID, builder.build());
     }
 
