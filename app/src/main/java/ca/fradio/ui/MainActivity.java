@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         // Populate the list for the first time
         refreshUsersList();
 
-        Log.d(TAG, "Starting broadcast requester");
+        Log.d(TAG, "Starting ic_broadcast requester");
         if(!_broadcastRequesterThread.isAlive()) {
             _broadcastRequesterThread.start();
         }

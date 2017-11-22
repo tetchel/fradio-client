@@ -13,7 +13,7 @@
             android:id="@+id/txt_username"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:text="music_fan"
             android:textAlignment="viewStart"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
@@ -24,7 +24,7 @@
             android:id="@+id/txt_detail"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:text="Listening to tetchel's radio"
             android:textAlignment="viewStart"
             app:layout_constraintStart_toStartOf="parent"
@@ -36,7 +36,7 @@
             android:layout_height="57dp"
             android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@mipmap/broadcast"
+            app:srcCompat="@mipmap/ic_broadcast"
             tools:layout_editor_absoluteY="1dp" />
 
     </android.support.constraint.ConstraintLayout>

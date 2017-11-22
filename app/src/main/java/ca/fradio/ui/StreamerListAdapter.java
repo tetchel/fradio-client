@@ -58,19 +58,23 @@ public class StreamerListAdapter extends ArrayAdapter<UserInfo> {
         if (user instanceof ListenerInfo){
             ListenerInfo info = (ListenerInfo) user;
             detailTxt.setText("Listening to " + info.getListening() + "\'s Radio");
+            joinStreamButton.setVisibility(View.INVISIBLE);
+
         } else if (user instanceof StreamerInfo){
             StreamerInfo info = (StreamerInfo) user;
             detailTxt.setText("Streaming great music");
+
         } else if (user instanceof InactiveInfo){
             InactiveInfo info = (InactiveInfo) user;
             detailTxt.setText("Offline");
+            joinStreamButton.setVisibility(View.INVISIBLE);
 
         }
 
 
         // Disallow connecting to stream if you are streaming
         if(!BroadcastRequesterThread.instance().isEnabled()) {
-            joinStreamButton.setVisibility(View.INVISIBLE);
+            //joinStreamButton.setVisibility(View.INVISIBLE);
         }
 
         joinStreamButton.setOnClickListener(new View.OnClickListener(){
@@ -80,14 +84,13 @@ public class StreamerListAdapter extends ArrayAdapter<UserInfo> {
                     // Currently listening to this guy - Stop listening
                     activity.disconnectFromStream();
 
-                    joinStreamButton.setImageResource(R.mipmap.broadcast);
+                    joinStreamButton.setImageResource(R.mipmap.ic_broadcast);
                 }
                 else {
                     activity.connectToStream(Globals.getSpotifyUsername(),
                             users.get(position).getUsername());
 
                     // Update this streamers's icon to be a Stop icon
-
                     joinStreamButton.setImageResource(R.mipmap.ic_stop);
                 }
             }

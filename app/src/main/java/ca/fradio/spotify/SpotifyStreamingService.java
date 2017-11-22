@@ -67,7 +67,7 @@ public class SpotifyStreamingService extends Service implements ConnectionStateC
     }
 
     private void setUpNetworkStateReceiver() {
-        // Set up the broadcast receiver for network events. Note that we also unregister
+        // Set up the ic_broadcast receiver for network events. Note that we also unregister
         // this receiver again in onPause().
         networkStateReceiver = new BroadcastReceiver() {
             @Override
