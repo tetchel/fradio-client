@@ -19,6 +19,8 @@ public class BroadcastRequesterThread extends Thread {
 
     private String streamer;
 
+    protected BroadcastRequesterThread() { }
+
     public static BroadcastRequesterThread instance() {
         if(instance == null) {
             instance = new BroadcastRequesterThread();
@@ -81,8 +83,10 @@ public class BroadcastRequesterThread extends Thread {
      * the BRT state will match that.
      */
     public boolean isEnabled() {
-        return isEnabled;
+        return isEnabled && streamer != null;
     }
 
     public void setStreamer(String streamer) { this.streamer = streamer; }
+
+    public String getStreamer() { return streamer; }
 }

@@ -50,7 +50,7 @@ public class StreamerListAdapter extends ArrayAdapter<UserInfo> {
 
         TextView usernameTxt = rowView.findViewById(R.id.txt_username);
         TextView detailTxt = rowView.findViewById(R.id.txt_detail);
-        ImageButton joinStreamButton = rowView.findViewById(R.id.btn_listen);
+        final ImageButton joinStreamButton = rowView.findViewById(R.id.btn_listen);
 
         final UserInfo user = users.get(position);
         usernameTxt.setText(user.getUsername());
@@ -75,8 +75,21 @@ public class StreamerListAdapter extends ArrayAdapter<UserInfo> {
 
         joinStreamButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                activity.connectToStream(Globals.getSpotifyUsername(),
-                        user.getUsername());
+                if(users.get(position).getUsername().equals(
+                        BroadcastRequesterThread.instance().getStreamer())) {
+                    // Currently listening to this guy - Stop listening
+                    activity.disconnectFromStream();
+
+                    joinStreamButton.setImageResource(R.mipmap.broadcast);
+                }
+                else {
+                    activity.connectToStream(Globals.getSpotifyUsername(),
+                            users.get(position).getUsername());
+
+                    // Update this streamers's icon to be a Stop icon
+
+                    joinStreamButton.setImageResource(R.mipmap.ic_stop);
+                }
             }
         });
 

@@ -21,8 +21,6 @@ public class SetupActivity extends AppCompatActivity {
 
     private static final String TAG = "Fradio-Main";
 
-    private final MediaStateReceiver msr = new MediaStateReceiver();
-
     public static final int LOGIN_ACTIVITY_REQUEST_CODE = 14321;
 
     private boolean hasSpotifyServiceBound = false;
@@ -51,7 +49,6 @@ public class SetupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
 
-        registerReceiver(msr, msr.getFilter());
 
         final Button loginButton = findViewById(R.id.btn_login);
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -92,6 +89,5 @@ public class SetupActivity extends AppCompatActivity {
         if(hasSpotifyServiceBound) {
             unbindService(streamServiceConn);
         }
-        unregisterReceiver(msr);
     }
 }
