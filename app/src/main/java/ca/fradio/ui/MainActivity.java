@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         // Populate the list for the first time
         refreshUsersList();
 
-        Log.d(TAG, "Starting ic_broadcast requester");
+        Log.d(TAG, "Starting broadcast requester");
         if(!_broadcastRequesterThread.isAlive()) {
             _broadcastRequesterThread.start();
         }
@@ -213,9 +213,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
        super.onDestroy();
        if(_isBroadcasting) {
-           StatusNotificationManager.cancel(this);
            _isBroadcasting = false;
        }
-        unregisterReceiver(_msr);
+       StatusNotificationManager.cancel(this);
+       unregisterReceiver(_msr);
     }
 }

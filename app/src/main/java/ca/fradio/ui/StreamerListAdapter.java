@@ -71,12 +71,6 @@ public class StreamerListAdapter extends ArrayAdapter<UserInfo> {
 
         }
 
-
-        // Disallow connecting to stream if you are streaming
-        if(!BroadcastRequesterThread.instance().isEnabled()) {
-            //joinStreamButton.setVisibility(View.INVISIBLE);
-        }
-
         joinStreamButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 if(users.get(position).getUsername().equals(

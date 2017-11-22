@@ -3,8 +3,8 @@ language: android
 before_script:
     - echo y | android update sdk -u -a -t tools
     - echo y | android update sdk -u -a -t platform-tools
-    - echo y | android update sdk -u -a -t build-tools-26.0.2
-    - echo y | android update sdk -u -a -t android-26
+    - echo y | android update sdk -u -a -t android-27
+    - echo y | android update sdk -u -a -t build-tools-27.0.1
 
 script:
     - ./gradlew build 
@@ -12,7 +12,7 @@ script:
 android:
     components:
         - tools
-        - build-tools-26.0.2
+        - build-tools-27.0.1
         - platform-tools
 
-        - android-26
+        - android-27

@@ -97,7 +97,7 @@ public class MediaStateReceiver extends BroadcastReceiver {
             // Sent only as a notification, your app may want to respond accordingly.
             // we don't care about this one
         }
-        Log.d(TAG, "Finished handling ic_broadcast");
+        Log.d(TAG, "Finished handling broadcast");
 
         if(boundActivity.isBroadcasting()) {
             updateNotification();

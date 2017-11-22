@@ -48,11 +48,11 @@ public class BroadcastRequesterThread extends Thread {
 
             try {
                 if(listenResponse == null) {
-                    Log.e(TAG, "NULL listenResponse when checking ic_broadcast status");
+                    Log.e(TAG, "NULL listenResponse when checking broadcast status");
                     continue;
                 }
                 else if(!listenResponse.getString("status").equals("OK")) {
-                    Log.e(TAG, "Error from server check ic_broadcast status: " +
+                    Log.e(TAG, "Error from server check broadcast status: " +
                             listenResponse.getString("status"));
                     continue;
                 }

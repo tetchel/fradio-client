@@ -18,7 +18,9 @@
             android:textAlignment="viewStart"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             app:layout_constraintStart_toStartOf="parent"
-            tools:layout_editor_absoluteY="13dp" />
+            tools:layout_editor_absoluteY="13dp"
+            android:gravity="start"
+            android:layout_marginLeft="8dp" />
 
         <TextView
             android:id="@+id/txt_detail"
@@ -28,7 +30,8 @@
             android:text="Listening to tetchel's radio"
             android:textAlignment="viewStart"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_username" />
+            app:layout_constraintTop_toBottomOf="@+id/txt_username"
+            android:gravity="start" />
 
         <ImageButton
             android:id="@+id/btn_listen"
@@ -37,7 +40,8 @@
             android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@mipmap/ic_broadcast"
-            tools:layout_editor_absoluteY="1dp" />
+            tools:layout_editor_absoluteY="1dp"
+            android:layout_marginRight="8dp" />
 
     </android.support.constraint.ConstraintLayout>
 </LinearLayout>
