@@ -51,7 +51,7 @@ public class MediaStateReceiver extends BroadcastReceiver {
     @Override
     // This is sent with all broadcasts, regardless of type. The value is taken from
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "Received media ic_broadcast: " + intent.getAction());
+        Log.d(TAG, "Received media broadcast: " + intent.getAction());
         // System.currentTimeMillis(), which you can compare to in order to determine how
         // old the event is.
         long timeSentInMs = intent.getLongExtra("timeSent", 0L);

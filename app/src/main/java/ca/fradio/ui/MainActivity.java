@@ -210,12 +210,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
     protected void onDestroy() {
        super.onDestroy();
-       if(_isBroadcasting) {
-           _isBroadcasting = false;
-       }
-       StatusNotificationManager.cancel(this);
        unregisterReceiver(_msr);
     }
 }
