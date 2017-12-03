@@ -1,4 +1,4 @@
-package ca.fradio;
+package ca.fradio.info;
 
 /**
  * Created by nwam on 21/11/17.

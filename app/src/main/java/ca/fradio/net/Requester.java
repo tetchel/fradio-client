@@ -16,10 +16,11 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-import ca.fradio.InactiveInfo;
-import ca.fradio.ListenerInfo;
-import ca.fradio.StreamerInfo;
-import ca.fradio.UserInfo;
+import ca.fradio.info.InactiveInfo;
+import ca.fradio.info.ListenerInfo;
+import ca.fradio.info.StreamerInfo;
+import ca.fradio.info.SongInfo;
+import ca.fradio.info.UserInfo;
 
 public class Requester {
 
@@ -271,10 +272,22 @@ public class Requester {
                 String username = user.getString("name");
                 String status = user.getString("status");
                 UserInfo userInfo;
+                SongInfo songInfo;
                 switch(status){
                     case "S":
                         boolean isPlaying = user.getInt("is_playing") == 1;
-                        userInfo = new StreamerInfo(username, isPlaying);
+
+                        JSONObject song = user.getJSONObject("track_info");
+                        String songTitle = song.getString("title");
+                        String songArtist = song.getString("artist");
+                        String songAlbum = song.getString("album");
+                        String songArtUrl = song.getString("art_url");
+                        String songArtThumbUrl = song.getString("art_thumb_url");
+
+
+                        songInfo = new SongInfo(songTitle, songArtist, songAlbum,
+                                songArtUrl, songArtThumbUrl);
+                        userInfo = new StreamerInfo(username, isPlaying, songInfo);
                         break;
 
                     case "L":

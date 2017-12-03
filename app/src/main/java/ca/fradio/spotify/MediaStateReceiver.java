@@ -4,12 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Bundle;
 import android.util.Log;
 
-import com.spotify.sdk.android.player.Metadata;
-
-import ca.fradio.Globals;
+import ca.fradio.info.Globals;
 import ca.fradio.net.Requester;
 import ca.fradio.ui.MainActivity;
 

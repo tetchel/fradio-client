@@ -14,9 +14,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import ca.fradio.UserInfo;
+import ca.fradio.info.UserInfo;
 import ca.fradio.net.BroadcastRequesterThread;
-import ca.fradio.Globals;
+import ca.fradio.info.Globals;
 import ca.fradio.R;
 import ca.fradio.net.Requester;
 import ca.fradio.spotify.MediaStateReceiver;
@@ -81,15 +81,15 @@ public class MainActivity extends AppCompatActivity {
         refreshUsersList();
     }
 
-    /** Populate list view with streamers */
+    /** Populate list view with users */
     private void refreshUsersList() {
         _swipeToRefresh.setRefreshing(true);
 
         Log.d(TAG, "Refreshing list of users");
-        final ListView listView = findViewById(R.id.list_streamers);
-        ArrayList<UserInfo> streamers = Requester.requestUsers();
+        final ListView listView = findViewById(R.id.list_users);
+        ArrayList<UserInfo> users = Requester.requestUsers();
 
-        StreamerListAdapter _listAdapter = new StreamerListAdapter(this, streamers);
+        UserListAdapter _listAdapter = new UserListAdapter(this, users);
         listView.setAdapter(_listAdapter);
 
         _swipeToRefresh.setRefreshing(false);

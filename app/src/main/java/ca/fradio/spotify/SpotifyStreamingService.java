@@ -1,6 +1,5 @@
 package ca.fradio.spotify;
 
-import android.app.NotificationManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -30,7 +29,7 @@ import com.spotify.sdk.android.player.SpotifyPlayer;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import ca.fradio.Globals;
+import ca.fradio.info.Globals;
 import ca.fradio.R;
 import ca.fradio.net.Requester;
 

@@ -1,4 +1,4 @@
-package ca.fradio;
+package ca.fradio.info;
 
 import ca.fradio.spotify.SpotifyStreamingService;
 

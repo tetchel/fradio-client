@@ -5,7 +5,7 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import ca.fradio.Globals;
+import ca.fradio.info.Globals;
 
 public class BroadcastRequesterThread extends Thread {
 

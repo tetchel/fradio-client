@@ -1,4 +1,4 @@
-package ca.fradio;
+package ca.fradio.info;
 
 // Data type class to hold all information we care about for a given user
 public class UserInfo {

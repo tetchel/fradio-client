@@ -11,9 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import ca.fradio.Globals;
+import ca.fradio.info.Globals;
 import ca.fradio.R;
-import ca.fradio.spotify.MediaStateReceiver;
 import ca.fradio.spotify.SpotifyLoginActivity;
 import ca.fradio.spotify.SpotifyStreamingService;
 

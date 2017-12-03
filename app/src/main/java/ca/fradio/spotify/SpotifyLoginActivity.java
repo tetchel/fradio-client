@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import ca.fradio.Globals;
+import ca.fradio.info.Globals;
 import ca.fradio.net.Requester;
 
 public class SpotifyLoginActivity extends Activity {

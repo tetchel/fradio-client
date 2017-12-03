@@ -11,21 +11,22 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import ca.fradio.Globals;
-import ca.fradio.InactiveInfo;
-import ca.fradio.ListenerInfo;
+import ca.fradio.info.Globals;
+import ca.fradio.info.InactiveInfo;
+import ca.fradio.info.ListenerInfo;
 import ca.fradio.R;
-import ca.fradio.StreamerInfo;
-import ca.fradio.UserInfo;
+import ca.fradio.info.StreamerInfo;
+import ca.fradio.info.UserInfo;
+import ca.fradio.info.SongInfo;
 import ca.fradio.net.BroadcastRequesterThread;
 
-public class StreamerListAdapter extends ArrayAdapter<UserInfo> {
+public class UserListAdapter extends ArrayAdapter<UserInfo> {
     private static final String TAG = "UserListAdapter";
 
     private final MainActivity activity;
     private final ArrayList<UserInfo> users;
 
-    public StreamerListAdapter(MainActivity mainActivity, ArrayList<UserInfo> usersIn) {
+    public UserListAdapter(MainActivity mainActivity, ArrayList<UserInfo> usersIn) {
         super(mainActivity, R.layout.user_list_item, usersIn);
 
         activity = mainActivity;
@@ -62,7 +63,9 @@ public class StreamerListAdapter extends ArrayAdapter<UserInfo> {
 
         } else if (user instanceof StreamerInfo){
             StreamerInfo info = (StreamerInfo) user;
-            detailTxt.setText("Streaming great music");
+            SongInfo songInfo = info.getSongInfo();
+            detailTxt.setText(String.format("Streaming %s",
+                    songInfo.getArtist()));
 
         } else if (user instanceof InactiveInfo){
             InactiveInfo info = (InactiveInfo) user;
